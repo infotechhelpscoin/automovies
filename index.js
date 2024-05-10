@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes')
 const seriesRoutes = require('./routes/seriesRoutes')
 const authRoutes = require('./routes/authRoutes')
 const taskRoutes = require('./routes/taskRoutes')
+const videoRoutes = require('./routes/videoRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
@@ -36,6 +37,7 @@ app.use(userRoutes);
 app.use(authRoutes);
 app.use(seriesRoutes);
 app.use(taskRoutes); 
+app.use(videoRoutes); 
 
 
 async function ensureChatGPTAPI() {
