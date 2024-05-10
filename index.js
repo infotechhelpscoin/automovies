@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
 const userRoutes = require('./routes/userRoutes')
+const seriesRoutes = require('./routes/seriesRoutes')
 const authRoutes = require('./routes/authRoutes')
+const taskRoutes = require('./routes/taskRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 
@@ -31,6 +33,8 @@ app.use(session({
 
 app.use(userRoutes);
 app.use(authRoutes);
+app.use(seriesRoutes);
+app.use(taskRoutes); 
 
 
 // Initialize and start the server
