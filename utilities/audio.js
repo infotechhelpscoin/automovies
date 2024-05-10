@@ -4,12 +4,12 @@ const { createClient, srt } = require('@deepgram/sdk');
 require("dotenv").config();
 const ffmpeg = require('fluent-ffmpeg');
 
-
+ 
 const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
-
+console.log(process.env.ELEVENGRAM_API_KEY)
+console.log(process.env.DEEPGRAM_API_KEY)
 async function generateVoice(text, topicId, index) {
   const fetch = (await import('node-fetch')).default;
-
   const options = {
       method: 'POST',
       headers: {

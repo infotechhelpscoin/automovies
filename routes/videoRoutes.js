@@ -40,6 +40,7 @@ router.post("/generate_video", async (req, res) => {
       "dfd62ac2-4994-4907-a4a3-37f41c6e027e"
     ];
     const topicId = topicIds[Math.floor(Math.random() * topicIds.length)];
+    // const topicId = '098ffce8-5802-42ac-91a6-9c6a06b302f3'
     const generatedVideo = await generateVideo(topicId)
     const tokens = await userCollection.findOne({
       googleId: seriesData.googleId,

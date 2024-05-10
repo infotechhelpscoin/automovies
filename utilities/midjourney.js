@@ -1,5 +1,5 @@
 const { getCollections } = require("../mongoConnection");
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const { getAudioDuration, generateVoice } = require("./audio");

@@ -8,6 +8,9 @@ ffmpeg.setFfprobePath(ffprobePath);
 const fs = require("fs");
 const { exec } = require("child_process");
 const { uploadVideoToCloudinary, uploadVideoLinkToMongoDB } = require("./upload");
+const { getAllMidjourneyData } = require('./midjourney')
+
+// const topicId = '098ffce8-5802-42ac-91a6-9c6a06b302f3'
 
 async function generateVideo(topicId) {
   // TODO USE IT FOR TESTING PURPOSE
@@ -118,7 +121,8 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
       const inputAudioPath = path.join(folderPath, dataset.audio);
 
       const outputVideoPath = `final_${topicId}_${i + 1}.mp4`;
-
+      console.log('output video path', outputVideoPath)
+      console.log('output file path', path.join(folderPath,outputFileName))
       await createVideoShoe(
         images,
         folderPath,
@@ -145,6 +149,7 @@ async function createVideoShoe(
   audio
 ) {
   return new Promise((resolve, reject) => {
+    
     videoshow(images, { transition: true })
       .audio(audio)
       .save(path.join(folderPath, outputFileName))
@@ -155,7 +160,7 @@ async function createVideoShoe(
         reject(new Error(`Error processing ${outputFileName}: ${err}`))
       )
       .on("end", async () => {
-        console.log(`Video created for ${outputFileName} in:`, outputVideoPath);
+        console.log(`Video created for ${outputFileName} in:`, outputFileName);
         try {
           await mergeAudioWithVideo(
             path.join(folderPath, outputFileName),
@@ -166,7 +171,7 @@ async function createVideoShoe(
         } catch (error) {
           reject(
             new Error(
-              `Error merging audio and video for ${fileName}: ${error.message}`
+              `Error merging audio and video for ${outputVideoPath}: ${error.message}`
             )
           );
         }
@@ -177,7 +182,7 @@ async function createVideoShoe(
 async function mergeAudioWithVideo(
   inputVideoPath,
   inputAudioPath,
-  outputVideoPath
+  outputVideoPath,folderPath
 ) {
   try {
     await new Promise((resolve, reject) => {
@@ -190,7 +195,7 @@ async function mergeAudioWithVideo(
         .on("error", (err) =>
           reject(new Error(`Error in merging audio and video: ${err}`))
         )
-        .on("end", () => resolve(outputVideoPath));
+        .on("end", () => resolve('finalvideo outptu', outputVideoPath));
     });
   } catch (error) {
     console.error("Error in mergeAudioWithVideo:", error);
@@ -205,23 +210,21 @@ async function concatenateVideos(topicId) {
     // Generate input video filenames dynamically based on topicId and indices
     const inputs = fileIndices.map((index) =>
       path.join(
-        __dirname,
-        "..",
-        "tempFolder",
+        __dirname,'..', 
         `final_${topicId}_${index}.mp4`
       )
     );
-    // console.log('inputs', inputs);
+    console.log('inputs', inputs);
 
     // Output video file
     const outputFilePath = path.join(
       __dirname,
       "..",
-      "..",
+      
         "tempFolder",
       `${topicId}_finalVideo.mp4`
     );
-
+console.log('output file path', outputFilePath)
     // Construct the ffmpeg command string dynamically
     const inputCmdPart = inputs.map((input) => `-i "${input}"`).join(" ");
     const filterComplex = `concat=n=${inputs.length}:v=1:a=1`;
@@ -231,7 +234,7 @@ async function concatenateVideos(topicId) {
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error in video concat: ${error.message}`);
-        reject(new Error(`Error in  video concatenation for topic id: ${topicId}: ${err}`))
+        reject(new Error(`Error in  video concatenation for topic id: ${topicId}: ${error}`))
               }
       // if (stderr) {
       //     // console.error(`ffmpeg stderr: ${stderr}`);
@@ -242,10 +245,12 @@ async function concatenateVideos(topicId) {
       resolve(outputFilePath); // Resolve the promise with the output path
     });
    } catch (error) {
-    console.error(`Error in video concatenation for topic id: ${topicId}: ${err}`);
+    console.error(`Error in video concatenation for topic id: ${topicId}: ${error}`);
     throw new Error(`Error in video concatenation for topic id: ${topicId}: ${error.message}`);
    }
   });
 }
 
+
+// generateVideo(topicId)
 module.exports = { generateVideo };
