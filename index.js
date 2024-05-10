@@ -29,8 +29,9 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use('/user', userRoutes);
+app.use(userRoutes);
 app.use(authRoutes);
+
 
 // Initialize and start the server
 async function startServer() {
