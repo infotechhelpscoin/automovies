@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const { oAuth2Client } = require('../config/googleOAuth')
 const { getCollections } = require('../mongoConnection')
 require('dotenv').config();
+console.log('frontend', process.env.FRONTEND_REDIRECT_URI)
+console.log('backend', process.env.GOOGLE_REDIRECT_URI)
+ 
 
 router.get("/connect_youtube", (req, res) => {
   const state = crypto.randomBytes(20).toString('hex');
@@ -67,5 +70,6 @@ router.get("/oauth2callback", async (req, res) => {
     res.status(500).send("Authentication failed");
   }
 });
+
 
 module.exports = router;

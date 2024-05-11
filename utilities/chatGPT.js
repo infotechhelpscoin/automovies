@@ -1,4 +1,5 @@
 const {channel} = require('../config/channel')
+
 function modifyChannelForGPT(topic) {
   return {
     ...channel, // Assuming 'channel' is accessible in this context; otherwise, it should be passed as a parameter

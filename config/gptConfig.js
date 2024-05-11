@@ -12,7 +12,17 @@ let ChatGPTAPI = null;
     return ChatGPTAPI;
 }
 
+async function ensureChatGPTAPI() {
+  if (!getChatGPTAPI()) {
+      await setupChatGPTAPI();
+  }
+  return getChatGPTAPI();
+}
+
+
 module.exports = {
   setupChatGPTAPI,
-  getChatGPTAPI
+  getChatGPTAPI,
+  ensureChatGPTAPI,
+  ChatGPTAPI
 }
