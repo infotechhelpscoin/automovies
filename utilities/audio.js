@@ -142,6 +142,8 @@ async function generateVoice(text, topicId, index) {
 // }
 
 
+
+
 async function getAudioDuration(filePath) {
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(filePath)) {
@@ -160,4 +162,15 @@ async function getAudioDuration(filePath) {
   });
 }
 
+async function callDuration(audioPath){
+  const res = await getAudioDuration(audioPath)
+  console.log(res)
+}
+
+// const audioFile = `output_9f91add3-016c-4a7f-a29f-c2850c3268ec_0.mp3`
+// const audioDir = path.join(__dirname, "..", "tempFolder");
+//         const audioPath = path.join(audioDir, audioFile);
+
+
+// callDuration(audioPath)
 module.exports={generateVoice, getAudioDuration}
