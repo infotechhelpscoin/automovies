@@ -14,6 +14,7 @@ const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
 const cron = require('node-cron');
 const gptPromptGenerate = require('./scheduleTask/promptGenerate');
+const { generateMidjourneyImages } = require('./scheduleTask/mainMidjourney');
 
 
 

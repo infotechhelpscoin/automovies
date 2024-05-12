@@ -108,7 +108,7 @@ try {
     }
   }
   
-
+  await updateDocumentStatus(scheduleCollection)
 
 
 } catch (error) {
@@ -201,6 +201,48 @@ try {
 
 }
 
+async function updateDocumentStatus(scheduleCollection) {
+  try {
+    const documentsToUpdate = await scheduleCollection.aggregate([
+      {
+        $match: {
+          status: "promptGenerated",
+          // images: { $size: 5 } // ensures there are exactly 5 images
+        }
+      },
+      {
+        $addFields: {
+          allImagesFinished: {
+            $allElementsTrue: {
+              $map: {
+                input: "$images",
+                as: "image",
+                in: { $eq: ["$$image.status", "finished"] }
+              }
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          allImagesFinished: true
+        }
+      }
+    ]).toArray();
+
+    // Step 2: Update Documents if conditions are met
+    for (const doc of documentsToUpdate) {
+      await scheduleCollection.updateOne(
+        { _id: doc._id },
+        { $set: { status: "imageGenerated" } }
+      );
+      console.log(`Document with ID ${doc._id} updated to 'imageGenerated'.`);
+    }
+  } catch (error) {
+    console.error("Failed to update document statuses:", error);
+  }
+}
+
 
 //todo this is for test purpose
 async function CallMidjourney( ) {
@@ -215,7 +257,7 @@ async function CallMidjourney( ) {
   }
 }
 
-CallMidjourney()
+// CallMidjourney()
 
 
 

@@ -26,28 +26,7 @@ async function main(modifiedChannel, scheduleTaskId) {
 // )
     const topicId = await saveMidjourneyPrompts(midJourneyPrompts, scheduleTaskId);
 
-    // const topicId = saveMidjourneyPrompts(midJourneyPrompts, scheduleTaskId);
-
-    // await manageImageProcessing(topicId, scheduleTaskId);
-
-    // const job = cron.schedule("*/60 * * * * *", async () => {
-    //   await cronJob(seriesId);
-    // });
-    // let channelTags=await GPTRunForEach(modifiedChannel.Motivation.SocailTags,'O1',stories);
-    // Wait for all images to reach a final state (example: "finished")
-    //   try {
-    //     await waitForAllImagesToFinish(seriesId, job);
-    //     console.log("All images processing finished successfully.");
-    //   } catch (error) {
-    //     console.error(`Error waiting for image processing: ${error}`);
-    // // Include original error message for better context
-    // throw new Error(`Failed due to timeout or other error in image processing: ${error.message}`);
-    //   } finally {
-    //     job.stop();  // Ensure that the cron job is stopped regardless of success or failure.
-    //   }
-    // console.log("Topic id after try catch", topicId);
-    // let FinalMovies=await CloudinaryForEach(images,storyDetails,channel.Motivation.CloudinaryConfig,channelTags);
-    // return topicId;
+    
   } catch (error) {
     console.error("Error in main function:", error);
     return null;

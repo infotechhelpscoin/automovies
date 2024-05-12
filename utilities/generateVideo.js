@@ -12,7 +12,7 @@ const { getAllMidjourneyData } = require('./midjourney')
 
 // const topicId = '098ffce8-5802-42ac-91a6-9c6a06b302f3'
 
-async function generateVideo(topicId) {
+async function generateVideo(topicId, document) {
   // TODO USE IT FOR TESTING PURPOSE
   // const generatedFiles = [
   //   {
@@ -48,6 +48,7 @@ async function generateVideo(topicId) {
   // ];
 
   const videoFileName = `${topicId}_finalVideo.mp4`;
+  console.log('inside generte video function', topicId, document._id)
 
   const videoFilePath = path.join(
     __dirname,
@@ -57,17 +58,17 @@ async function generateVideo(topicId) {
   );
 
   console.log("inside test function", videoFileName);
-
-  let cloudinaryLink;
+// todo need to change
+  let cloudinaryLink = 'www.abc.com';
 
   try {
-    const generatedFiles = await getAllMidjourneyData(topicId);
-
+    const generatedFiles = await getAllMidjourneyData(topicId, document);
+    
     // creating video for each quote along with subtitle
 
     await createVideoWithGeneratedFiles(generatedFiles, topicId);
 
-    console.log("All videos created and merged successfully.");
+  //   console.log("All videos created and merged successfully.");
 
     await concatenateVideos(topicId);
 
@@ -80,11 +81,11 @@ async function generateVideo(topicId) {
     console.log("cludl link", cloudinaryLink);
 
     // Saving uploaded video link to the database.
-    await uploadVideoLinkToMongoDB(cloudinaryLink, topicId);
+    await uploadVideoLinkToMongoDB(cloudinaryLink, document._id);
 
     console.log("video file link upload complete.");
 
-    return cloudinaryLink;
+    return true;
   } catch (error) {
     console.error("Error in the generate function:", error);
     throw error;

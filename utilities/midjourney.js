@@ -10,25 +10,25 @@ if (!fs.existsSync(imagesDir)) {
   fs.mkdirSync(imagesDir, { recursive: true });
 }
 
-async function getAllMidjourneyData(topicId) {
+async function getAllMidjourneyData(topicId, document) {
   try {
-    const { midjourneyImageCollection } = await getCollections();
-    const documents = await midjourneyImageCollection
-      .find({ topicId: topicId })
-      .project({ _id: 0, upscaleImage_url: 1, quote: 1, topic: 1 })
-      .limit(5)
-      .toArray();
+    // const { midjourneyImageCollection } = await getCollections();
+    // const documents = await midjourneyImageCollection
+    //   .find({ topicId: topicId })
+    //   .project({ _id: 0, upscaleImage_url: 1, quote: 1, topic: 1 })
+    //   .limit(5)
+    //   .toArray();
 
-      if (documents.length === 0) {
-        throw new Error(`Data for topicId ${topicId} could not download.`);
-      }
+    //   if (documents.length === 0) {
+    //     throw new Error(`Data for topicId ${topicId} could not download.`);
+    //   }
 
-    console.log("midjourney data doc", documents);
+    console.log("midjourney data doc", document);
 
     const images = [];
     const quotes = [];
 
-    documents.forEach((doc) => {
+    document.images.forEach((doc) => {
       images.push(doc.upscaleImage_url);
       quotes.push(doc.quote);
     });
@@ -40,15 +40,15 @@ async function getAllMidjourneyData(topicId) {
       const filename = await downloadImage(images[i], i, topicId);
       imageFileNames.push(filename);
     }
-    // console.log('Downloaded images:', imageFileNames);
+    console.log('Downloaded images:', imageFileNames);
 
     const generatedFiles = [];
-
+// todo only for audio file
     for (let i = 0; i < quotes.length; i++) {
       const quote = quotes[i];
-      const { audio, captions } = await generateVoice(quote, topicId, i);
+      const { audio } = await generateVoice(quote, topicId, i);
 
-      if (audio && captions) {
+      if (audio) {
         const audioDir = path.join(__dirname, "..", "tempFolder");
         const audioPath = path.join(audioDir, audio);
 
@@ -58,7 +58,6 @@ async function getAllMidjourneyData(topicId) {
         // Add the audio duration to the generatedFiles array
         generatedFiles.push({
           audio,
-          captions,
           image: imageFileNames[i],
           duration: audioDuration,
         });
@@ -68,6 +67,31 @@ async function getAllMidjourneyData(topicId) {
         console.log(`Error generating voice for quote: ${quote}`);
       }
     }
+    // todo for audio file and caption
+    // for (let i = 0; i < quotes.length; i++) {
+    //   const quote = quotes[i];
+    //   const { audio, captions } = await generateVoice(quote, topicId, i);
+
+    //   if (audio && captions) {
+    //     const audioDir = path.join(__dirname, "..", "tempFolder");
+    //     const audioPath = path.join(audioDir, audio);
+
+    //     // Calculate audio duration for each audio file
+    //     const audioDuration = await getAudioDuration(audioPath);
+
+    //     // Add the audio duration to the generatedFiles array
+    //     generatedFiles.push({
+    //       audio,
+    //       captions,
+    //       image: imageFileNames[i],
+    //       duration: audioDuration,
+    //     });
+
+    //     // console.log(`Voice generated for quote: ${quote}`);
+    //   } else {
+    //     console.log(`Error generating voice for quote: ${quote}`);
+    //   }
+    // }
     console.log("Generated file from database", generatedFiles);
 
     return generatedFiles;
