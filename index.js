@@ -15,6 +15,8 @@ const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
 const cron = require('node-cron');
 const gptPromptGenerate = require('./scheduleTask/promptGenerate');
 const { generateMidjourneyImages } = require('./scheduleTask/mainMidjourney');
+const { videoGenerationSchedule } = require('./scheduleTask/videoGenerate');
+const { uploadToYoutube } = require('./scheduleTask/uploadToYoutube');
 
 
 
@@ -55,23 +57,43 @@ async function ensureChatGPTAPI() {
 // Initialize and start the server
 async function startServer() {
   try {
-      // Connect to MongoDB before starting the server
-      await connect();
-      console.log('Connected to MongoDB successfully.');
-    //   '*/20 * * * * *' for 20 seconds
-    // '*/50 * * * *' for 50 min
-      // cron.schedule('*/20 * * * *', gptPromptGenerate);
-      // cron.schedule('*/10 * * * *', generateMidjourneyImages);
+    await connect();
+    console.log('Connected to MongoDB successfully.');
 
+    // Manually trigger all tasks once at server start
+    await runScheduledTasks();
 
-      const PORT = process.env.PORT || 3000;
-      app.listen(PORT, () => {
-          console.log(`Server is running on http://localhost:${PORT}`);
-      });
+    // Then set up the cron job to run subsequently every 30 minutes
+    cron.schedule('*/20 * * * *', runScheduledTasks);
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
   } catch (error) {
-      console.error('Failed to connect to MongoDB:', error);
-      process.exit(1); // Exit the process if the connection fails
+    console.error('Failed to connect to MongoDB:', error);
+    process.exit(1);
   }
 }
+
+async function runScheduledTasks() {
+  console.log("Scheduled tasks started at:", new Date());
+  try {
+    await gptPromptGenerate();
+    console.log("Completed GPT Prompt Generation");
+
+    await generateMidjourneyImages();
+    console.log("Completed Generating Midjourney Images");
+
+    await videoGenerationSchedule();
+    console.log("Completed Video Generation Schedule");
+
+    await uploadToYoutube();
+    console.log("Completed Uploading to YouTube");
+  } catch (taskError) {
+    console.error("Error during scheduled tasks:", taskError);
+  }
+}
+
 
 startServer();

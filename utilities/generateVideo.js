@@ -48,7 +48,7 @@ async function generateVideo(topicId, document) {
   // ];
 
   const videoFileName = `${topicId}_finalVideo.mp4`;
-  console.log('inside generte video function', topicId, document._id)
+  // console.log('inside generte video function', topicId, document._id)
 
   const videoFilePath = path.join(
     __dirname,
@@ -57,9 +57,7 @@ async function generateVideo(topicId, document) {
     videoFileName
   );
 
-  console.log("inside test function", videoFileName);
-// todo need to change
-  let cloudinaryLink = 'www.abc.com';
+  let cloudinaryLink;
 
   try {
     const generatedFiles = await getAllMidjourneyData(topicId, document);
@@ -68,22 +66,19 @@ async function generateVideo(topicId, document) {
 
     await createVideoWithGeneratedFiles(generatedFiles, topicId);
 
-  //   console.log("All videos created and merged successfully.");
 
     await concatenateVideos(topicId);
 
-    console.log("Concatenation done for video");
 
     // uploading the video in cloudinary
 
+
     cloudinaryLink = await uploadVideoToCloudinary(videoFilePath);
 
-    console.log("cludl link", cloudinaryLink);
 
     // Saving uploaded video link to the database.
     await uploadVideoLinkToMongoDB(cloudinaryLink, document._id);
 
-    console.log("video file link upload complete.");
 
     return true;
   } catch (error) {
@@ -100,9 +95,7 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
   if (!generatedFiles || generatedFiles.length === 0) {
     throw new Error("No generated files provided or empty array.");
   }
-
   const folderPath = path.join(__dirname, "..", "tempFolder");
-
   const audio = path.join(__dirname, "..", "tempFolder", "song.mp3");
 
   try {
@@ -114,16 +107,11 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
           loop: calculateLoopDuration(dataset.duration),
         },
       ];
-      // console.log('Updated image', images);
       const outputFileName = `video_${topicId}_${i + 1}.mp4`;
-
-      const subtitles = path.join(folderPath, dataset.captions);
+      // const subtitles = path.join(folderPath, dataset.captions);
 
       const inputAudioPath = path.join(folderPath, dataset.audio);
-
-      const outputVideoPath = `final_${topicId}_${i + 1}.mp4`;
-      console.log('output video path', outputVideoPath)
-      console.log('output file path', path.join(folderPath,outputFileName))
+      const outputVideoPath = path.join(folderPath, `final_${topicId}_${i + 1}.mp4`);
       await createVideoShoe(
         images,
         folderPath,
@@ -155,7 +143,7 @@ async function createVideoShoe(
       .audio(audio)
       .save(path.join(folderPath, outputFileName))
       .on("start", (command) =>
-        console.log(`Video process started for ${outputFileName}`)
+        console.log(`Video process started for inside video show`)
       )
       .on("error", (err) =>
         reject(new Error(`Error processing ${outputFileName}: ${err}`))
@@ -196,7 +184,7 @@ async function mergeAudioWithVideo(
         .on("error", (err) =>
           reject(new Error(`Error in merging audio and video: ${err}`))
         )
-        .on("end", () => resolve('finalvideo outptu', outputVideoPath));
+        .on("end", () => resolve('finalVideo output', outputVideoPath));
     });
   } catch (error) {
     console.error("Error in mergeAudioWithVideo:", error);
@@ -211,11 +199,10 @@ async function concatenateVideos(topicId) {
     // Generate input video filenames dynamically based on topicId and indices
     const inputs = fileIndices.map((index) =>
       path.join(
-        __dirname,'..', 
+        __dirname,'..', 'tempFolder',
         `final_${topicId}_${index}.mp4`
       )
     );
-    console.log('inputs', inputs);
 
     // Output video file
     const outputFilePath = path.join(
@@ -225,7 +212,6 @@ async function concatenateVideos(topicId) {
         "tempFolder",
       `${topicId}_finalVideo.mp4`
     );
-console.log('output file path', outputFilePath)
     // Construct the ffmpeg command string dynamically
     const inputCmdPart = inputs.map((input) => `-i "${input}"`).join(" ");
     const filterComplex = `concat=n=${inputs.length}:v=1:a=1`;
@@ -252,6 +238,41 @@ console.log('output file path', outputFilePath)
   });
 }
 
+// todo for test purpose
+// const topicId = '4201b039-2e2d-4e99-85b4-b4f5e832f684'
 
+// const generatedFiles =  [
+//   {
+//     audio: 'output_4201b039-2e2d-4e99-85b4-b4f5e832f684_0.mp3',
+//     image: 'image_4201b039-2e2d-4e99-85b4-b4f5e832f684_1.jpg',
+//     duration: 10.292188
+//   },
+//   {
+//     audio: 'output_4201b039-2e2d-4e99-85b4-b4f5e832f684_1.mp3',
+//     image: 'image_4201b039-2e2d-4e99-85b4-b4f5e832f684_2.jpg',
+//     duration: 7.183625
+//   },
+//   {
+//     audio: 'output_4201b039-2e2d-4e99-85b4-b4f5e832f684_2.mp3',
+//     image: 'image_4201b039-2e2d-4e99-85b4-b4f5e832f684_3.jpg',
+//     duration: 4.179563
+//   },
+//   {
+//     audio: 'output_4201b039-2e2d-4e99-85b4-b4f5e832f684_3.mp3',
+//     image: 'image_4201b039-2e2d-4e99-85b4-b4f5e832f684_4.jpg',
+//     duration: 5.746938
+//   },
+//   {
+//     audio: 'output_4201b039-2e2d-4e99-85b4-b4f5e832f684_4.mp3',
+//     image: 'image_4201b039-2e2d-4e99-85b4-b4f5e832f684_5.jpg',
+//     duration: 3.422
+//   }
+// ]
+
+// async function testCreateVideo( generatedFiles, topicId){
+//   const res = await createVideoWithGeneratedFiles(generatedFiles, topicId)
+//   const res2 = await concatenateVideos(topicId)
+// }
+// testCreateVideo(generatedFiles, topicId)
 // generateVideo(topicId)
 module.exports = { generateVideo };

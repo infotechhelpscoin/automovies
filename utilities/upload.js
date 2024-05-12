@@ -1,8 +1,10 @@
 // const { cloudinary} = require("../config/cloudinaryConfig");
+const { default: axios } = require("axios");
 const { getCollections } = require("../mongoConnection");
 require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
 const { ObjectId } = require('mongodb');
+const fs = require("fs");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -84,6 +86,31 @@ async function uploadVideoLinkToMongoDB(videoLink, scheduleId) {
   // } 
 }
 
+async function downloadVideoFromCloudinary(url, outputPath) {
+  try {
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
+  });
+  const writer = fs.createWriteStream(outputPath);
+
+  response.data.pipe(writer);
+
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+} catch (error) {
+  console.error("Error downloading the video:", error);
+  throw error;  
+}
+}
+
+
+
+
 module.exports = {
-  uploadVideoToCloudinary, uploadVideoLinkToMongoDB
+  uploadVideoToCloudinary, uploadVideoLinkToMongoDB,
+  downloadVideoFromCloudinary
 }

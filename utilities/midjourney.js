@@ -23,7 +23,6 @@ async function getAllMidjourneyData(topicId, document) {
     //     throw new Error(`Data for topicId ${topicId} could not download.`);
     //   }
 
-    console.log("midjourney data doc", document);
 
     const images = [];
     const quotes = [];
@@ -40,7 +39,6 @@ async function getAllMidjourneyData(topicId, document) {
       const filename = await downloadImage(images[i], i, topicId);
       imageFileNames.push(filename);
     }
-    console.log('Downloaded images:', imageFileNames);
 
     const generatedFiles = [];
 // todo only for audio file
@@ -62,7 +60,6 @@ async function getAllMidjourneyData(topicId, document) {
           duration: audioDuration,
         });
 
-        // console.log(`Voice generated for quote: ${quote}`);
       } else {
         console.log(`Error generating voice for quote: ${quote}`);
       }
@@ -92,7 +89,6 @@ async function getAllMidjourneyData(topicId, document) {
     //     console.log(`Error generating voice for quote: ${quote}`);
     //   }
     // }
-    console.log("Generated file from database", generatedFiles);
 
     return generatedFiles;
 
