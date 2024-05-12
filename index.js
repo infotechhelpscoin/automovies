@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 
 // CORS configuration
 app.use(cors({
-    origin: ["http://localhost:5173", "https://autoshortsfrontend-gpxe.vercel.app"],
+    origin: ["http://localhost:5173", "https://autoshortsfrontend.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     headers: ["Content-Type", "Authorization"]
 }));
