@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { createClient, srt } = require('@deepgram/sdk');
+// const { createClient, srt } = require('@deepgram/sdk');
 require("dotenv").config();
 const ffmpeg = require('fluent-ffmpeg');
 
  
-const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
+// const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
 
 // todo only for audio not caption
 
