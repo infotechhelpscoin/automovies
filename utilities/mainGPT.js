@@ -224,9 +224,11 @@ async function generateMidJourneyPrompts(modifiedChannel, storyDetails) {
 async function saveMidjourneyPrompts(prompts, scheduleTaskId) {
   try {
     const topicId = uuidv4();
+    // const imageId = uuidv4();
     prompts.forEach((prompt) => {
       prompt.topicId = topicId;
-      prompt.status = "Not started";
+      prompt.imageId = uuidv4()
+      prompt.status = "Notstarted";
       prompt.scheduleTaskId = scheduleTaskId;
     });
     console.log('json array for bulk insert', prompts)
@@ -250,8 +252,11 @@ async function bulkInsertDocuments(scheduleId, jsonArray) {
     // Assuming we are appending jsonArray to a field called 'images'
     const result = await scheduleCollection.updateOne(
       { _id: new ObjectId(scheduleId) },
-      { $push: { images: { $each: jsonArray } } }, // This pushes each item in jsonArray into the 'images' array field
-      { upsert: true } // Creates the document if it does not exist
+      { 
+        $push: { images: { $each: jsonArray } }, 
+        $set: { status: "promptGenerated" }  
+      },
+      { upsert: true } 
     );
 
     console.log(`Updated documents with _id ${scheduleId}, modified count: ${result.modifiedCount}`);
@@ -262,7 +267,7 @@ async function bulkInsertDocuments(scheduleId, jsonArray) {
   }
 }
 
-
+// todo this is only for test purpose
 async function callMainWithTaskId( ) {
   // Extracting the scheduleTaskId from the document
   const modifiedChannel = {
@@ -274,7 +279,7 @@ async function callMainWithTaskId( ) {
       CloudinaryConfig: {}
     }
   }
-  const scheduleTaskId = '663f8d2a9c92cf9514a87969'
+  const scheduleTaskId = '663f8d2a9c92cf9514a8796a'
   try {
      const result = await main(modifiedChannel, scheduleTaskId);
     console.log("Result from main function:", result);
@@ -285,6 +290,6 @@ async function callMainWithTaskId( ) {
   }
 }
 
-callMainWithTaskId()
+// callMainWithTaskId()
 
 module.exports = {main}

@@ -59,7 +59,8 @@ async function startServer() {
       console.log('Connected to MongoDB successfully.');
     //   '*/20 * * * * *' for 20 seconds
     // '*/50 * * * *' for 50 min
-      // cron.schedule('*/5 * * * * *', gptPromptGenerate);
+      // cron.schedule('*/20 * * * *', gptPromptGenerate);
+      // cron.schedule('*/10 * * * *', generateMidjourneyImages);
 
 
       const PORT = process.env.PORT || 3000;
