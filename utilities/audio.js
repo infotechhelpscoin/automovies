@@ -32,6 +32,8 @@ async function generateVoice(text, topicId, index) {
 
   try {
 
+    
+
       const folderPath = path.join(__dirname, "..", "tempFolder"); 
      
       
@@ -47,7 +49,7 @@ async function generateVoice(text, topicId, index) {
      
       fs.writeFileSync(audioFilePath, data);
 
-      // console.log('MP3 file has been saved.');
+      console.log('MP3 file has been saved.');
 
       const audioData = fs.readFileSync(audioFilePath);
       
@@ -161,6 +163,8 @@ async function getAudioDuration(filePath) {
     });
   });
 }
+
+// todo for test purpose
 
 async function callDuration(audioPath){
   const res = await getAudioDuration(audioPath)
