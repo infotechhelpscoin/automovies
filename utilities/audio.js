@@ -3,7 +3,10 @@ const path = require('path');
 // const { createClient, srt } = require('@deepgram/sdk');
 require("dotenv").config();
 const ffmpeg = require('fluent-ffmpeg');
-
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const ffprobePath = require("@ffprobe-installer/ffprobe").path;
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
  
 // const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
 
