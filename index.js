@@ -64,7 +64,7 @@ async function startServer() {
     await runScheduledTasks();
 
     // Then set up the cron job to run subsequently every 30 minutes
-    cron.schedule('*/10 * * * *', runScheduledTasks);
+    cron.schedule('*/1 * * * *', runScheduledTasks);
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {

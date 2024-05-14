@@ -6,7 +6,7 @@ async function videoGenerationSchedule () {
   try {
     const document = await scheduleCollection.findOne({ status: "imageGenerated" });
     if (document && document.images && document.images.length > 0) {
-      const topicId = document.images[0].topicId; // Assuming you want the topicId of the first image
+      const topicId = document.images[0].topicId; 
       const result = await generateVideo(topicId, document)
       if(result){
         console.log(`Video generation successful for schedule id ${document._id}`)

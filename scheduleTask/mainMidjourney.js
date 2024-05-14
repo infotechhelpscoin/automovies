@@ -13,7 +13,9 @@ try {
       }
     }
   }).limit(2).toArray();
+ 
   console.log('not started images array', notStartedImages)
+ 
   const inProgressImages = await scheduleCollection.find({
     "images": {
       $elemMatch: {
@@ -33,7 +35,7 @@ try {
   for (const document of notStartedImages) {
     for (const image of document.images) {
       if (image.status === "Notstarted") {
-        await waitRandom(4000);
+        await waitRandom(10000);
         const prompt = image.prompt;
         // console.log(`Generating image for ${image.imageId} ..  ${prompt}...`);
         const task_id = await generateImage(prompt);
@@ -54,7 +56,7 @@ try {
   for (const document of inProgressImages) {
     for (const image of document.images) {
       if (image.status === "InProgess") {
-        await waitRandom(4000);
+        await waitRandom(10000);
         const task_id = image.task_id;
         // console.log(`Checking image in progress for ${image.imageId} ..  ${task_id}...`);
 
@@ -88,7 +90,7 @@ try {
   for (const document of upscalePendingImages) {
     for (const image of document.images) {
       if (image.status === "upscalePending") {
-        await waitRandom(4000);
+        await waitRandom(10000);
         const task_id = image.upscaleTaskId;
 
         // console.log(`Checking upscale image for ${image.imageId} ..  ${task_id}...`);
@@ -112,7 +114,7 @@ try {
 
 
 } catch (error) {
-  console.error('Error in cron job:', error);
+  console.error('Error in cron job Midjourney image:', error);
 }
 }
 
@@ -148,13 +150,14 @@ async function generateImage(prompt) {
   
   try {
     let response = await axios.request(config);
+    // console.log('Res from midjourney generte Image funtion', response)
     return response.data.task_id;
   } catch (error) {
     console.error(`Error generating image: ${error}`);
     throw new Error(`Failed to generate image: ${error.message}`);
   }
 }
-
+   
 async function fetchImageStatus(task_id) {
   const endpoint = 'https://api.midjourneyapi.xyz/mj/v2/fetch';
 

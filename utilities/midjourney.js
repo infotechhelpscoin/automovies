@@ -13,19 +13,9 @@ if (!fs.existsSync(imagesDir)) {
 
 
 async function getAllMidjourneyData(topicId, document) {
+  let generatedFiles = [];
   try {
-    // const { midjourneyImageCollection } = await getCollections();
-    // const documents = await midjourneyImageCollection
-    //   .find({ topicId: topicId })
-    //   .project({ _id: 0, upscaleImage_url: 1, quote: 1, topic: 1 })
-    //   .limit(5)
-    //   .toArray();
-
-    //   if (documents.length === 0) {
-    //     throw new Error(`Data for topicId ${topicId} could not download.`);
-    //   }
-
-
+    
     const images = [];
     const quotes = [];
 
@@ -42,7 +32,7 @@ async function getAllMidjourneyData(topicId, document) {
       imageFileNames.push(filename);
     }
 
-    const generatedFiles = [];
+    // const generatedFiles = [];
 // todo only for audio file
     for (let i = 0; i < quotes.length; i++) {
       const quote = quotes[i];
@@ -91,15 +81,14 @@ async function getAllMidjourneyData(topicId, document) {
     //     console.log(`Error generating voice for quote: ${quote}`);
     //   }
     // }
-
-    return generatedFiles;
-
     
   } catch (error) {
     console.error("Error generating voice or processing data:", error);
     
   throw new Error(`Error in getAllMidjourneyData for topicId ${topicId}: ${error.message}`);
   }
+  
+  return generatedFiles;
 }
 
 
@@ -218,7 +207,7 @@ async function test (topicId, document){
   console.log('res', res)
 }
 
-test(topicId, document)
+// test(topicId, document)
 
   module.exports = { getAllMidjourneyData };
 

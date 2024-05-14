@@ -3,6 +3,7 @@ const path = require('path');
 // const { createClient, srt } = require('@deepgram/sdk');
 require("dotenv").config();
 const ffmpeg = require('fluent-ffmpeg');
+const { default: axios } = require('axios');
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -33,33 +34,43 @@ async function generateVoice(text, topicId, index) {
       })
   };
 
+  const folderPath = path.join(__dirname, "..", "tempFolder"); 
+  
+  const audioFileName = `output_${topicId}_${index}.mp3`; 
+  
+  const audioFilePath = path.join(folderPath, audioFileName);
   try {
+    const url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+    const apiKey = process.env.DEEPGRAM_API_KEY; // Ensure your API key is stored in environment variables
 
-    
+    // Axios request configuration
+    const options = {
+      method: 'POST',
+      url: url,
+      headers: {
+        'Authorization': `Token ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      responseType: 'stream',  // Important for handling binary data like audio files
+      data: {
+        text
+      }
+    };
 
-      const folderPath = path.join(__dirname, "..", "tempFolder"); 
-     
-      
-      const audioFileName = `output_${topicId}_${index}.mp3`; 
-      
-      const audioFilePath = path.join(folderPath, audioFileName);
+    // Make the HTTP request using Axios
+    const response = await axios(options);
 
-      const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/29vD33N1CtxCmqQRPOHJ', options);
+    // Pipe the response data directly into a write stream for the file
+    const writer = fs.createWriteStream(audioFilePath);
+    response.data.pipe(writer);
 
-      // console.log('response from eleven labs', response)
-      const buffer = await response.arrayBuffer();
-      const data = Buffer.from(buffer);
-     
-      fs.writeFileSync(audioFilePath, data);
-
-      console.log('MP3 file has been saved.');
-
-      const audioData = fs.readFileSync(audioFilePath);
-      
-      // console.log('Transcribing audio using Deepgram...');
-
-           // Return the filenames
-      return { audio: audioFileName};
+    return new Promise((resolve, reject) => {
+      writer.on('finish', () => {
+        console.log("MP3 file has been saved.");
+        resolve({ audio: audioFileName });
+      });
+      writer.on('error', reject);
+    });
 
   } catch (err) {
     console.error('Error during voice generation:', err);

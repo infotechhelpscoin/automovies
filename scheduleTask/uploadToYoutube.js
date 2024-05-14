@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const { google } = require('googleapis');
 const {  ObjectId } = require('mongodb');
+const fsp = require('fs').promises; 
 
 async function uploadToYoutube (){
   const { scheduleCollection } = await getCollections()
@@ -94,6 +95,14 @@ async function upload(document) {
 } catch (error) {
   console.error(`Failed to upload to YouTube: ${error.message} for document ID ${document._id}`);
     throw error;
+}finally {
+  // Attempt to delete the temporary video file regardless of the previous outcomes
+  try {
+    await fsp.unlink(videoFilePath);
+    console.log(`Successfully deleted temporary file: ${videoFilePath}`);
+  } catch (deleteError) {
+    console.error(`Failed to delete temporary file: ${videoFilePath}`, deleteError);
+  }
 }
 }
 

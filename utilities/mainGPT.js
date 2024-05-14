@@ -90,7 +90,7 @@ async function explainStories(modifiedChannel, stories) {
     console.log("Explained stories:", storyDetails);
 
     // Check if the result is sufficient
-    if (storyDetails && storyDetails.length >= 5) {
+    if (storyDetails && storyDetails.length >= 2) {
       return storyDetails;
     }
 
@@ -173,7 +173,7 @@ async function generateMidJourneyPrompts(modifiedChannel, storyDetails) {
       // console.log("Generated prompts:", prompts);
 
       // Check if the number of prompts is sufficient
-      if (prompts && prompts.length >= 5) {
+      if (prompts && prompts.length >= 2) {
         return prompts;
       }
 
