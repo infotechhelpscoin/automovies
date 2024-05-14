@@ -88,12 +88,12 @@ console.log('cloudinary link', cloudinaryLink)
     console.error("Error in the generate function:", error);
     throw error;
   } finally {
-    await cleanupFiles(videoPaths, generatedFiles)
-    try {
-      await fsp.unlink(videoFilePath);
-  } catch (error) {
-      console.error(`Failed to delete final video file ${videoFilePath}:`, error);
-  }
+  //   await cleanupFiles(videoPaths, generatedFiles)
+  //   try {
+  //     await fsp.unlink(videoFilePath);
+  // } catch (error) {
+  //     console.error(`Failed to delete final video file ${videoFilePath}:`, error);
+  // }
   }
 }
 
