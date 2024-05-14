@@ -213,12 +213,12 @@ async function downloadImage(url, index, topicId) {
     ]
   };
   
-async function test (topicId, document){
-  const res = await getAllMidjourneyData(topicId, document)
-  console.log('res', res)
-}
+// async function test (topicId, document){
+//   const res = await getAllMidjourneyData(topicId, document)
+//   console.log('res', res)
+// }
 
-test(topicId, document)
+// test(topicId, document)
 
   module.exports = { getAllMidjourneyData };
 

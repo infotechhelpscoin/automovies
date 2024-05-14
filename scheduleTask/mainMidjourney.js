@@ -245,17 +245,17 @@ async function updateDocumentStatus(scheduleCollection) {
 
 
 //todo this is for test purpose
-async function CallMidjourney( ) {
+// async function CallMidjourney( ) {
   
-  try {
-     const result = await generateMidjourneyImages()
-    console.log("Result from main function:", result);
-    return result;
-  } catch (error) {
-    console.error("Error calling main function:", error);
-    throw new Error("Failed to execute main function");
-  }
-}
+//   try {
+//      const result = await generateMidjourneyImages()
+//     console.log("Result from main function:", result);
+//     return result;
+//   } catch (error) {
+//     console.error("Error calling main function:", error);
+//     throw new Error("Failed to execute main function");
+//   }
+// }
 
 // CallMidjourney()
 
