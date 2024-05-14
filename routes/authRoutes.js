@@ -73,3 +73,14 @@ router.get("/oauth2callback", async (req, res) => {
 
 
 module.exports = router;
+
+
+// {
+//   "_id": {
+//     "$oid": "6642f61146c0a25ac20d312c"
+//   },
+//   "googleId": "117809492420944575813",
+//   "accessToken": "ya29.a0AXooCgsUnZSFdfIbqX99_mCdYm48sgXzh3HZu2chPbuUSzlcl1F2Wm7CU-u-TxFs-Fvv4GIu29aTOrew178aG3bO5f4ZlCRmTZ-QiC081AaMcQrec3vqL_wcnAc3tWyDI10d75PlC2LQQMg16UUrYkvepcDw0sJtDk00aCgYKAb8SARESFQHGX2MiPbJJC3_zkGdI49oGLES7Xw0171",
+//   "refreshToken": "1//06alEasL9cefuCgYIARAAGAYSNwF-L9IrJKNw176LjSSBogIQ8Kda2r7s7cJKDFZeRSz-lCIGfTlEA-NXTv4CwGkWg6cYPaJOev0",
+//   "email": "ainewspack-4065977337580806238@pages.plusgoogle.com"
+// }
