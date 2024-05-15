@@ -38,12 +38,12 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(userRoutes);
-app.use(authRoutes);
-app.use(seriesRoutes);
-app.use(taskRoutes); 
-app.use(videoRoutes); 
-app.use(scheduleRoutes); 
+// app.use(userRoutes);
+// app.use(authRoutes);
+// app.use(seriesRoutes);
+// app.use(taskRoutes); 
+// app.use(videoRoutes); 
+// app.use(scheduleRoutes); 
 
 
 async function ensureChatGPTAPI() {

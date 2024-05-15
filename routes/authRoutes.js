@@ -5,8 +5,7 @@ const jwt = require('jsonwebtoken');
 const { oAuth2Client } = require('../config/googleOAuth')
 const { getCollections } = require('../mongoConnection')
 require('dotenv').config();
-console.log('frontend', process.env.FRONTEND_REDIRECT_URI)
-console.log('backend', process.env.GOOGLE_REDIRECT_URI)
+
  
 
 router.get("/connect_youtube", (req, res) => {

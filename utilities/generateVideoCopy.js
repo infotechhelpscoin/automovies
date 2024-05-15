@@ -13,40 +13,41 @@ const { getAllMidjourneyData } = require('./midjourney')
 
 // const topicId = '098ffce8-5802-42ac-91a6-9c6a06b302f3'
 
+// TODO USE IT FOR TESTING PURPOSE
+// const generatedFiles = [
+//   {
+//     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_0.mp3",
+//     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_0.srt",
+//     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.jpg",
+//     duration: 10.9975,
+//   },
+//   {
+//     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.mp3",
+//     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.srt",
+//     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.jpg",
+//     duration: 2.925688,
+//   },
+//   {
+//     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.mp3",
+//     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.srt",
+//     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.jpg",
+//     duration: 4.127313,
+//   },
+//   {
+//     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.mp3",
+//     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.srt",
+//     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.jpg",
+//     duration: 7.183625,
+//   },
+//   {
+//     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.mp3",
+//     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.srt",
+//     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_5.jpg",
+//     duration: 6.922438,
+//   },
+// ];
+
 async function generateVideo(topicId, document) {
-  // TODO USE IT FOR TESTING PURPOSE
-  // const generatedFiles = [
-  //   {
-  //     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_0.mp3",
-  //     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_0.srt",
-  //     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.jpg",
-  //     duration: 10.9975,
-  //   },
-  //   {
-  //     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.mp3",
-  //     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_1.srt",
-  //     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.jpg",
-  //     duration: 2.925688,
-  //   },
-  //   {
-  //     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.mp3",
-  //     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_2.srt",
-  //     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.jpg",
-  //     duration: 4.127313,
-  //   },
-  //   {
-  //     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.mp3",
-  //     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_3.srt",
-  //     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.jpg",
-  //     duration: 7.183625,
-  //   },
-  //   {
-  //     audio: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.mp3",
-  //     captions: "output_098ffce8-5802-42ac-91a6-9c6a06b302f3_4.srt",
-  //     image: "image_098ffce8-5802-42ac-91a6-9c6a06b302f3_5.jpg",
-  //     duration: 6.922438,
-  //   },
-  // ];
 
   const videoFileName = `${topicId}_finalVideo.mp4`;
 
@@ -108,19 +109,34 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
   const folderPath = path.join(__dirname, "..", "tempFolder");
   const audio = path.join(__dirname, "..", "tempFolder", "song.mp3");
   const videoPaths = [];
-
+console.log('inside CVGF generated files', generatedFiles)
   try {
     for (let i = 0; i < generatedFiles.length; i++) {
       const dataset = generatedFiles[i];
       const images = [
-        {
-          path: path.join(folderPath, dataset.image),
-          loop: calculateLoopDuration(dataset.duration),
-        },
+        path.join(folderPath, dataset.image),
+          // loop: calculateLoopDuration(dataset.duration),
+       
       ];
       const outputFileName = `video_${topicId}_${i + 1}.mp4`;
       const subtitles = path.join(folderPath, dataset.captions);
-
+      const mergeFile = `merge_${topicId}_${i + 1}`
+      const mergedOutputPath = path.join(folderPath, mergeFile)
+      const videoOptions = {
+        fps: 25, 
+        transition: true,
+        loop: dataset.duration, 
+        transitionDuration: 1, // seconds
+        videoBitrate: 1024,
+        videoCodec: 'libx264',
+        size: '640x?',
+        audioBitrate: '128k',
+        audioChannels: 2,
+        format: 'mp4',
+        pixelFormat: 'yuv420p'
+      };
+      // console.log('inside CVGF generated files', images)
+      console.log('inside CVGF generated files', subtitles)
       const inputAudioPath = path.join(folderPath, dataset.audio);
       const outputVideoPath = path.join(folderPath, `final_${topicId}_${i + 1}.mp4`);
      const paths =  await createVideoShoe(
@@ -129,9 +145,10 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
         outputFileName,
         inputAudioPath,
         outputVideoPath,
-        audio, subtitles
+        audio, subtitles, videoOptions, mergedOutputPath
       );
       videoPaths.push(paths.intermediateVideoPath, paths.finalVideoPath);
+      await addSubtitlesToVideo(mergedOutputPath, subtitles, outputVideoPath);
     }
     return videoPaths;
   } catch (error) {
@@ -143,32 +160,30 @@ async function createVideoWithGeneratedFiles(generatedFiles, topicId) {
 }
 
 async function createVideoShoe(
-  images,
-  folderPath,
-  outputFileName,
-  inputAudioPath,
-  outputVideoPath,
-  audio, subtitles
+  images, folderPath, outputFileName, inputAudioPath, outputVideoPath, audio, subtitles, videoOptions, mergedOutputPath
 ) {
   return new Promise((resolve, reject) => {
+   
+    console.log('inside createVideoshow', subtitles)
+    console.log('....................')
     const intermediateVideoPath = path.join(folderPath, outputFileName);
-    videoshow(images, { transition: true })
+    videoshow(images, videoOptions)
       .audio(audio)
-      .subtitles(subtitles)
+      // .subtitles()
       .save(intermediateVideoPath)
       .on("start", (command) =>
         console.log(`Video process started for inside video show`)
       )
       .on("error", (err) =>
-        reject(new Error(`Error processing ${intermediateVideoPath}: ${err}`))
+        reject(new Error(`Error processing ${outputFileName}: ${err}`))
       )
       .on("end", async () => {
-        console.log(`Video created for ${intermediateVideoPath} in:`, intermediateVideoPath);
+        console.log(`Video created for ${outputFileName} in:`, outputFileName);
         try {
           await mergeAudioWithVideo(
-            intermediateVideoPath,
+            path.join(folderPath, outputFileName),
             inputAudioPath,
-            outputVideoPath
+            outputVideoPath, subtitles, folderPath,mergedOutputPath
           );
           resolve({intermediateVideoPath,finalVideoPath: outputVideoPath});
         } catch (error) {
@@ -182,22 +197,29 @@ async function createVideoShoe(
 }
 
 async function mergeAudioWithVideo(
-  intermediateVideoPath,
+  inputVideoPath,
   inputAudioPath,
-  outputVideoPath
-) {
+  outputVideoPath,subtitles, folderPath,mergedOutputPath
+) {  
+  if (!subtitles) {
+    console.error("Subtitles path is undefined.");
+    throw new Error("Subtitles path must be defined.");
+  }
   try {
     await new Promise((resolve, reject) => {
+   
+      console.log('merge subtitle sub', subtitles)
       ffmpeg()
-        .input(intermediateVideoPath)
-        .input(inputAudioPath)
-        .complexFilter("[0:a][1:a]amix=inputs=2:duration=longest")
-        .videoCodec("copy")
-        .save(outputVideoPath)
-        .on("error", (err) =>
-          reject(new Error(`Error in merging audio and video: ${err}`))
-        )
-        .on("end", () => resolve('finalVideo output', outputVideoPath));
+      .input(inputVideoPath)
+      .input(inputAudioPath)
+      .complexFilter("[0:a][1:a]amix=inputs=2:duration=longest")
+      .videoCodec("copy")
+      .save(mergedOutputPath)
+      .on("error", (err) =>
+        reject(new Error(`Error in merging audio and video: ${err}`))
+      )
+      .on("end", () => resolve('finalVideo output', mergedOutputPath));
+
     });
   } catch (error) {
     console.error("Error in mergeAudioWithVideo:", error);
@@ -205,13 +227,38 @@ async function mergeAudioWithVideo(
   }
 }
 
+async function addSubtitlesToVideo(mergedVideoPath, subtitlesPath, finalOutputPath) {
+  try {
+    await new Promise((resolve, reject) => {
+      console.log('Adding subtitles', subtitlesPath);
+      ffmpeg()
+        .input(mergedVideoPath)  // Path to the merged video file
+        .inputOptions([
+            '-sub_charenc', 'UTF-8'  // Ensure correct character encoding for subtitles if needed
+        ])
+        .outputOptions([
+            `-vf subtitles=${subtitlesPath}`  // Apply SRT subtitles to the video
+        ])
+        .videoCodec("copy")  // Use 'copy' to avoid re-encoding video, unless subtitle encoding requires otherwise
+        .save(finalOutputPath)
+        .on("error", (err) => reject(new Error(`Error in adding subtitles: ${err}`)))
+        .on("end", () => resolve('Subtitles added successfully', finalOutputPath));
+    });
+  } catch (error) {
+    console.error("Error in addSubtitlesToVideo:", error);
+    throw new Error(`Error adding subtitles: ${error}`);
+  }
+}
+
+
+
 async function concatenateVideos(topicId) {
   return new Promise((resolve, reject) => {
    try {
     //todo for 5 images use it
-    const fileIndices = [1, 2, 3, 4, 5];
+    // const fileIndices = [1, 2, 3, 4, 5];
     //todo for 2 images use it
-    // const fileIndices = [1, 2];
+    const fileIndices = [1, 2];
     // Generate input video filenames dynamically based on topicId and indices
     const inputs = fileIndices.map((index) =>
       path.join(
@@ -224,6 +271,7 @@ async function concatenateVideos(topicId) {
     const outputFilePath = path.join(
       __dirname,
       "..",
+      
         "tempFolder",
       `${topicId}_finalVideo.mp4`
     );
@@ -270,6 +318,8 @@ async function cleanupFiles(videoPaths, generatedFiles) {
 
 
 // todo for test purpose
+// const topicId = '4201b039-2e2d-4e99-85b4-b4f5e832f684'
+
 const generatedFiles =  [
   {
     audio: 'output_38ead003-70a7-490e-bc1c-b1f79a1fe9d3_0.mp3',
@@ -387,13 +437,15 @@ const document = {
   ]
 };
 
-async function testCreateVideo(topicId, document){
-  const res = await generateVideo(topicId, document)
+async function testCreateVideoWithGeneratedFiles(generatedFiles ,topicId){
+  const res = await createVideoWithGeneratedFiles(generatedFiles ,topicId)
   console.log('testCreateVideoWithGeneratedFiles', res)
+  const res2 = await concatenateVideos(topicId)
 }
 
 
 
-testCreateVideo(topicId, document)
+// testCreateVideo(topicId, document)
 // testCreateVideoWithGeneratedFiles(generatedFiles ,topicId)
-module.exports = { generateVideo };
+// generateVideo(topicId)
+// module.exports = { generateVideo };
