@@ -17,12 +17,12 @@ const gptPromptGenerate = require('./scheduleTask/promptGenerate');
 const { generateMidjourneyImages } = require('./scheduleTask/mainMidjourney');
 const { videoGenerationSchedule } = require('./scheduleTask/videoGenerate');
 const { uploadToYoutube } = require('./scheduleTask/uploadToYoutube');
-
-
+const { fetchVideoGeneratedSchedules } = require('./utilities/emailSend');
 
 const app = express();
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
+
 
 // CORS configuration
 app.use(cors({
@@ -57,18 +57,18 @@ async function ensureChatGPTAPI() {
 async function startServer() {
   try {
     await connect();
-    console.log('Connected to MongoDB successfully.');
+    // console.log('Connected to MongoDB successfully.');
 
     // Manually trigger all tasks once at server start
     await runScheduledTasks();
 
     // Then set up the cron job to run subsequently every 30 minutes
-    // cron.schedule('*/1 * * * *', runScheduledTasks);
+    cron.schedule('*/1 * * * *', runScheduledTasks);
 
-    const PORT = process.env.PORT || 3001;
+    const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      // console.log(`Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
@@ -90,6 +90,10 @@ async function runScheduledTasks() {
 
     await uploadToYoutube();
     console.log("Completed Uploading to YouTube");
+    
+    await fetchVideoGeneratedSchedules();
+    console.log("Completed sending email");
+
   } catch (taskError) {
     console.error("Error during scheduled tasks:", taskError);
   }
