@@ -21,7 +21,6 @@ const { uploadToYoutube } = require('./scheduleTask/uploadToYoutube');
 
 
 const app = express();
-
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
 
@@ -39,12 +38,12 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(userRoutes);
-app.use(authRoutes);
-app.use(seriesRoutes);
-app.use(taskRoutes); 
-app.use(videoRoutes); 
-app.use(scheduleRoutes); 
+// app.use(userRoutes);
+// app.use(authRoutes);
+// app.use(seriesRoutes);
+// app.use(taskRoutes); 
+// app.use(videoRoutes); 
+// app.use(scheduleRoutes); 
 
 
 async function ensureChatGPTAPI() {
@@ -61,10 +60,10 @@ async function startServer() {
     console.log('Connected to MongoDB successfully.');
 
     // Manually trigger all tasks once at server start
-    await runScheduledTasks();
+    // await runScheduledTasks();
 
     // Then set up the cron job to run subsequently every 30 minutes
-    cron.schedule('*/1 * * * *', runScheduledTasks);
+    // cron.schedule('*/1 * * * *', runScheduledTasks);
 
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {

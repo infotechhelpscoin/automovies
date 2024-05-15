@@ -180,6 +180,24 @@ async function getAudioDuration(filePath) {
 
 // todo for test purpose
 
+async function callGenerateVoice() {
+  const text = "This is the sample text for generating voice and captions. This is tested by Enayet for authshort project.";
+  const topicId = 123;  // Replace with the actual topic ID
+  const index = 1;      // Replace with the appropriate index
+
+  try {
+    const { audio, captions } = await generateVoice(text, topicId, index);
+    console.log(`Generated audio file: ${audio}`);
+    console.log(`Generated captions file: ${captions}`);
+  } catch (error) {
+    console.error('Error in generating voice and captions:', error);
+  }
+}
+
+// Call the function
+// callGenerateVoice();
+
+
 async function callDuration(audioPath){
   const res = await getAudioDuration(audioPath)
   console.log(res)

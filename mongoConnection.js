@@ -5,8 +5,6 @@ require("dotenv").config();
 const uri = 'mongodb+srv://balpreet:ct8bCW7LDccrGAmQ@cluster0.2pwq0w2.mongodb.net/enayetTest'
 
 const client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     tls: true,  
   });
   let db;

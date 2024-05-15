@@ -2,7 +2,7 @@ const { getCollections } = require("../mongoConnection");
 // const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
-const { getAudioDuration, generateVoice } = require("./audio");
+const { getAudioDuration, generateVoice } = require("./audioSubtitle");
 
 const imagesDir = path.join(__dirname, "..", "tempFolder");
 // Ensure the directory exists
@@ -34,34 +34,11 @@ async function getAllMidjourneyData(topicId, document) {
 
     // const generatedFiles = [];
 // todo only for audio file
-    for (let i = 0; i < quotes.length; i++) {
-      const quote = quotes[i];
-      const { audio } = await generateVoice(quote, topicId, i);
-
-      if (audio) {
-        const audioDir = path.join(__dirname, "..", "tempFolder");
-        const audioPath = path.join(audioDir, audio);
-
-        // Calculate audio duration for each audio file
-        const audioDuration = await getAudioDuration(audioPath);
-
-        // Add the audio duration to the generatedFiles array
-        generatedFiles.push({
-          audio,
-          image: imageFileNames[i],
-          duration: audioDuration,
-        });
-
-      } else {
-        console.log(`Error generating voice for quote: ${quote}`);
-      }
-    }
-    // todo for audio file and caption
     // for (let i = 0; i < quotes.length; i++) {
     //   const quote = quotes[i];
-    //   const { audio, captions } = await generateVoice(quote, topicId, i);
+    //   const { audio } = await generateVoice(quote, topicId, i);
 
-    //   if (audio && captions) {
+    //   if (audio) {
     //     const audioDir = path.join(__dirname, "..", "tempFolder");
     //     const audioPath = path.join(audioDir, audio);
 
@@ -71,16 +48,39 @@ async function getAllMidjourneyData(topicId, document) {
     //     // Add the audio duration to the generatedFiles array
     //     generatedFiles.push({
     //       audio,
-    //       captions,
     //       image: imageFileNames[i],
     //       duration: audioDuration,
     //     });
 
-    //     // console.log(`Voice generated for quote: ${quote}`);
     //   } else {
     //     console.log(`Error generating voice for quote: ${quote}`);
     //   }
     // }
+    // todo for audio file and caption
+    for (let i = 0; i < quotes.length; i++) {
+      const quote = quotes[i];
+      const { audio, captions } = await generateVoice(quote, topicId, i);
+
+      if (audio && captions) {
+        const audioDir = path.join(__dirname, "..", "tempFolder");
+        const audioPath = path.join(audioDir, audio);
+
+        // Calculate audio duration for each audio file
+        const audioDuration = await getAudioDuration(audioPath);
+
+        // Add the audio duration to the generatedFiles array
+        generatedFiles.push({
+          audio,
+          captions,
+          image: imageFileNames[i],
+          duration: audioDuration,
+        });
+
+        // console.log(`Voice generated for quote: ${quote}`);
+      } else {
+        console.log(`Error generating voice for quote: ${quote} for topic id: ${topicId}`);
+      }
+    }
     
   } catch (error) {
     console.error("Error generating voice or processing data:", error);
