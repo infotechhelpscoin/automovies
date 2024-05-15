@@ -38,7 +38,7 @@ router.post("/scheduled_video", async (req, res) => {
 });
 
 function createTasks(postADay, content, refreshToken, seriesId, email) {
-  const totalTasks = postADay * 5;
+  const totalTasks = postADay * 2;
   const intervalHours = TASK_INTERVAL_HOURS[postADay] || TASK_INTERVAL_HOURS['default'];
   const currentTime = new Date();
   const tasks = [];
