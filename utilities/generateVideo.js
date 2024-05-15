@@ -88,12 +88,16 @@ console.log('cloudinary link', cloudinaryLink)
     console.error("Error in the generate function:", error);
     throw error;
   } finally {
-  //   await cleanupFiles(videoPaths, generatedFiles)
-  //   try {
-  //     await fsp.unlink(videoFilePath);
-  // } catch (error) {
-  //     console.error(`Failed to delete final video file ${videoFilePath}:`, error);
-  // }
+    console.log('video paths and generated files cleanup started')
+    await cleanupFiles(videoPaths, generatedFiles)
+    console.log('video paths and generated files cleanup finished')
+    try {
+      console.log('video file paths cleanup started')
+      await fsp.unlink(videoFilePath);
+      console.log('video file paths cleanup finished')
+  } catch (error) {
+      console.error(`Failed to delete final video file ${videoFilePath}:`, error);
+  }
   }
 }
 
@@ -256,6 +260,7 @@ async function concatenateVideos(topicId) {
 async function cleanupFiles(videoPaths, generatedFiles) {
   generatedFiles.forEach(file => {
     videoPaths.push(path.join(__dirname, "..", "tempFolder", file.audio));
+    videoPaths.push(path.join(__dirname, "..", "tempFolder", file.captions));
     videoPaths.push(path.join(__dirname, "..", "tempFolder", file.image));
   });
   // Perform deletion of all files
@@ -394,6 +399,6 @@ async function testCreateVideo(topicId, document){
 
 
 
-testCreateVideo(topicId, document)
+// testCreateVideo(topicId, document)
 // testCreateVideoWithGeneratedFiles(generatedFiles ,topicId)
 module.exports = { generateVideo };
