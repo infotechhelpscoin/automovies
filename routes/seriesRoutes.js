@@ -5,6 +5,7 @@ const { getCollections } = require('../mongoConnection');
 // Middleware to validate series data
 function validateSeriesData(req, res, next) {
     const { destination, content, narrator, language, duration, userEmail } = req.body;
+    console.log('body validate', req.body)
     if (!destination || !content || !narrator || !language || !duration || !userEmail) {
         return res.status(400).json({ message: "All fields must be filled" });
     }
@@ -22,6 +23,7 @@ function validateEmailQuery(req, res, next) {
 
 router.post("/series", validateSeriesData, async (req, res) => {
     const { destination, content, narrator, language, duration, userEmail } = req.body;
+    console.log('body', req.body)
     const { seriesCollection } = await getCollections();
 
     try {

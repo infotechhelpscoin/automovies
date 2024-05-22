@@ -9,14 +9,15 @@ const authRoutes = require('./routes/authRoutes')
 const taskRoutes = require('./routes/taskRoutes')
 const videoRoutes = require('./routes/videoRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
+const contactRoutes = require('./routes/contactRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
 const cron = require('node-cron');
-const gptPromptGenerate = require('./scheduleTask/promptGenerate');
-const { generateMidjourneyImages } = require('./scheduleTask/mainMidjourney');
-const { videoGenerationSchedule } = require('./scheduleTask/videoGenerate');
-const { uploadToYoutube } = require('./scheduleTask/uploadToYoutube');
+// const gptPromptGenerate = require('./scheduleTask/promptGenerate');
+// const { generateMidjourneyImages } = require('./scheduleTask/mainMidjourney');
+// const { videoGenerationSchedule } = require('./scheduleTask/videoGenerate');
+// const { uploadToYoutube } = require('./scheduleTask/uploadToYoutube');
 
 
 
@@ -45,6 +46,7 @@ app.use(seriesRoutes);
 app.use(taskRoutes); 
 app.use(videoRoutes); 
 app.use(scheduleRoutes); 
+app.use(contactRoutes); 
 
 
 async function ensureChatGPTAPI() {
