@@ -10,6 +10,7 @@ const taskRoutes = require('./routes/taskRoutes')
 const videoRoutes = require('./routes/videoRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
 const contactRoutes = require('./routes/contactRoutes')
+const affiliateRoutes = require('./routes/affiliateRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
@@ -47,6 +48,7 @@ app.use(taskRoutes);
 app.use(videoRoutes); 
 app.use(scheduleRoutes); 
 app.use(contactRoutes); 
+app.use(affiliateRoutes); 
 
 
 async function ensureChatGPTAPI() {
