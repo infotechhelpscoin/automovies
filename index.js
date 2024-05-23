@@ -11,6 +11,7 @@ const videoRoutes = require('./routes/videoRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
 const contactRoutes = require('./routes/contactRoutes')
 const affiliateRoutes = require('./routes/affiliateRoutes')
+const paymentRoutes = require('./routes/paymentRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
@@ -26,6 +27,7 @@ const app = express();
 
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
 
 // CORS configuration
 app.use(cors({
@@ -49,6 +51,7 @@ app.use(videoRoutes);
 app.use(scheduleRoutes); 
 app.use(contactRoutes); 
 app.use(affiliateRoutes); 
+app.use(paymentRoutes); 
 
 
 async function ensureChatGPTAPI() {
