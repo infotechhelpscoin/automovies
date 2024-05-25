@@ -44,7 +44,7 @@ const fetchVideoGeneratedSchedules = async () => {
     console.log('Combined Result:', result);
      // Send email for each item in the result array
      for (const item of result) {
-      const to = 'infoicpasyl@gmail.com'; // Testing email address
+      const to = `${item.userEmail}`;
       const subject = `Video link for ${item.seriesName}`;
       const text = `Your video for ${item.seriesName} is generated. The link is ${item.videoLink}. The video will be published on YouTube on ${item.scheduleTime}.`;
 
@@ -53,10 +53,10 @@ const fetchVideoGeneratedSchedules = async () => {
         console.log(`Email sent to ${to} for series ${item.seriesName}`);
 
         // Update the scheduleCollection to set emailSent to true
-        await scheduleCollection.updateOne({ _id: new ObjectId(item._id) }, { $set: { emailSent: true } });
-        console.log(`Updated emailSent status for schedule ${item._id}`);
+        await scheduleCollection.updateOne({ seriesId:item.seriesId }, { $set: { emailSent: true } });
+        console.log(`Updated emailSent status for schedule ${item.seriesId}`);
       } catch (error) {
-        console.error(`Error sending email or updating status for schedule ${item._id}:`, error);
+        console.error(`Error sending email or updating status for schedule ${item.seriesId}:`, error);
       }
     }
 
