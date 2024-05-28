@@ -2,13 +2,7 @@ const express = require('express');
 const session = require("express-session");
 const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();
-const userRoutes = require('./routes/userRoutes')
-const seriesRoutes = require('./routes/seriesRoutes')
-const authRoutes = require('./routes/authRoutes')
-const taskRoutes = require('./routes/taskRoutes')
-const videoRoutes = require('./routes/videoRoutes')
-const scheduleRoutes = require('./routes/scheduleRoutes')
+require('dotenv').config(); 
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
 const { getChatGPTAPI, setupChatGPTAPI} = require('./config/gptConfig')
@@ -38,12 +32,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// app.use(userRoutes);
-// app.use(authRoutes);
-// app.use(seriesRoutes);
-// app.use(taskRoutes); 
-// app.use(videoRoutes); 
-// app.use(scheduleRoutes); 
+
 
 
 async function ensureChatGPTAPI() {
@@ -57,8 +46,6 @@ async function ensureChatGPTAPI() {
 async function startServer() {
   try {
     await connect();
-    // console.log('Connected to MongoDB successfully.');
-
     // Manually trigger all tasks once at server start
     await runScheduledTasks();
 
