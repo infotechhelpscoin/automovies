@@ -64,7 +64,7 @@ const fetchVideoGeneratedSchedules = async () => {
   } catch (error) {
     console.error('Error fetching schedules and series:', error);
   } finally {
-   
+     
   }
 };
 
