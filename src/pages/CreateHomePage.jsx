@@ -50,7 +50,7 @@ const CreateHomePage = () => {
       };
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND}/series`,
+          `http://localhost:3000/series`,
           data
         );
         const resData = await response.data;

@@ -52,12 +52,12 @@ const CreateUi = () => {
       try {
         setLoading(true)
         const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND}/series`,
+          `http://localhost:3000/series`,
           data
         );
         const resData = await response.data;
         alert(`${resData.message}`);
-        localStorage.removeItem("formData"); // Clear the form data after submission
+        localStorage.removeItem("formData");
         navigate("/dashboard");
       } catch (error) {
         console.error("Error sending video generation request:", error);

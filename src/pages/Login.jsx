@@ -45,7 +45,7 @@ const Login = () => {
             userEmail: user?.email,
             ...formData,
           };
-          const response = await axios.post(`${import.meta.env.VITE_BACKEND}/series`, data);
+          const response = await axios.post(`http://localhost:3000/series`, data);
           const resData = await response.data;
           alert(`${resData.message}`);
           localStorage.removeItem('formData'); // Clear the form data after submission

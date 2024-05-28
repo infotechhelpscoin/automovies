@@ -24,7 +24,7 @@ console.log('userplan in billing', userPlan)
       };
       console.log(paymentData);
   
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND}/order`, paymentData)
+      const response = await axios.post(`http://localhost:3000/order`, paymentData)
       const order = await response.data
 
       console.log('order', order)
@@ -39,7 +39,7 @@ console.log('userplan in billing', userPlan)
         handler: async function (response){
           const body = { ...response, userId: userPlan._id}
           console.log('body inside handler', body)
-          const validateRes = await axios.post(`${import.meta.env.VITE_BACKEND}/order/validate`, body)
+          const validateRes = await axios.post(`http://localhost:3000/order/validate`, body)
           const jsonRes = await validateRes.data
           console.log('jsonRes', jsonRes)
         },

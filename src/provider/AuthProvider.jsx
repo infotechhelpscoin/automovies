@@ -57,7 +57,7 @@ const getUserData = async (userData) => {
     try {
       setLoading(true)
       console.log('user data fetched,', userData)
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND}/user`, userData)
+        const response = await axios.post(`http://localhost:3000/user`, userData)
         const data = await response?.data;
         if(data?.email){
             setUserPlan(data)

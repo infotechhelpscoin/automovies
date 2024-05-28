@@ -18,7 +18,7 @@ const View = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND}/series_info?email=${userPlan?.email}`
+          `http://localhost:3000/series_info?email=${userPlan?.email}`
         );
         setSeriesData(response?.data);
       } catch (error) {
@@ -33,7 +33,7 @@ const View = () => {
   const handleConnectYoutube = (item) => {
     console.log("item inside youtube connect", item._id);
     sessionStorage.setItem("taskId", item._id);
-    window.location.href = `${import.meta.env.VITE_BACKEND}/connect_youtube`;
+    window.location.href = `http://localhost:3000/connect_youtube`;
   };
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const View = () => {
     }
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND}/scheduled_video`,
+        `http://localhost:3000/scheduled_video`,
         {
           email: userPlan?.email,
           seriesId: item._id,
@@ -103,7 +103,7 @@ const View = () => {
   //     return
   //   }
   //   try {
-  //     const response = await axios.post(`${import.meta.env.VITE_BACKEND}/generate_video`, {
+  //     const response = await axios.post(`http://localhost:3000/generate_video`, {
   //       email: userPlan?.email,
   //       seriesId: item._id,
   //      });

@@ -31,7 +31,7 @@ const AffiliateCreate = () => {
       referralCode: `${baseUrl}${referralCode}`,
     };
     axios
-      .post(`${import.meta.env.VITE_BACKEND}/affiliate-create`, requestData)
+      .post(`http://localhost:3000/affiliate-create`, requestData)
       .then((response) => {
         if (response.data.message === `Referral link added successfully`)
           setUserPlan(null);
@@ -69,7 +69,7 @@ const AffiliateCreate = () => {
         };
         console.log(requestData);
         const response = await axios.put(
-          `${import.meta.env.VITE_BACKEND}/update-payment-email`,
+          `http://localhost:3000/update-payment-email`,
           requestData
         );
 

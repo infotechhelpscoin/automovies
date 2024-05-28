@@ -22,7 +22,7 @@ const Contact = () => {
     }
     console.log(formData);
     
-    axios.post(`${import.meta.env.VITE_BACKEND}/contact`, formData)
+    axios.post(`http://localhost:3000/contact`, formData)
       .then(response => {
         console.log(response.data);
         alert('Form submitted successfully!');
