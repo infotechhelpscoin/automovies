@@ -5,7 +5,6 @@ import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
-  console.log('backend', import.meta.env.VITE_BACKEND)
   const location = useLocation();
   // console.log(location, location.state)
 
