@@ -21,6 +21,7 @@
     "express-session": "^1.18.0",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
     "googleapis": "^135.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",

@@ -11,6 +11,7 @@ const videoRoutes = require('./routes/videoRoutes')
 const scheduleRoutes = require('./routes/scheduleRoutes')
 const contactRoutes = require('./routes/contactRoutes')
 const affiliateRoutes = require('./routes/affiliateRoutes')
+const uploadVideoRoutes = require('./routes/uploadVideoRoutes')
 const paymentRoutes = require('./routes/paymentRoutes')
 const cloudinary = require('./config/cloudinaryConfig')
 const { connect } = require('./mongoConnection')
@@ -28,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // CORS configuration
 app.use(cors({
-    origin: ["http://localhost:5173", "https://autoshortsfrontend.vercel.app"],
+    origin: ["http://localhost:5173", "https://autoshortsfrontend.vercel.app", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     headers: ["Content-Type", "Authorization"]
 }));
@@ -49,6 +50,7 @@ app.use(scheduleRoutes);
 app.use(contactRoutes); 
 app.use(affiliateRoutes); 
 app.use(paymentRoutes); 
+app.use(uploadVideoRoutes); 
 
 
 async function ensureChatGPTAPI() {
