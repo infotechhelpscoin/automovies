@@ -104,19 +104,6 @@ async function explainStories(modifiedChannel, stories) {
   throw new Error("No or insufficient explain story returned from GPTRunForEach after several attempts.");
 }
 
-// first one
-// async function GPTRunForEach(prompts,substringToReplace,replaceWithStringArray)
-// {
-//     let outputArray=[];
-//     for (let i = 0; i < prompts.length; i++) {
-//         let prompt = prompts[i];
-//         let replaceWithString = replaceWithStringArray[i];
-//         finalPrompt= prompt.replace(substringToReplace,replaceWithString);
-//         result=await GPTRun(finalPrompt);
-//         outputArray.push(result);
-//     }
-//     return outputArray
-// }
 
 async function GPTRunForEach(mainPrompt, substringToReplace, replaceWithStringArray) {
   let outputArray = [];
