@@ -1,0 +1,9 @@
+flask
+openai
+anthropic
+python-dotenv
+deepgram-sdk
+httpx
+verboselogs
+pytube
+moviepy

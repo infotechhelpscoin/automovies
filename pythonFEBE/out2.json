@@ -1,0 +1,105 @@
+{
+  "introToTopic": "Discover the groundbreaking capabilities of Apple Intelligence, your personal AI assistant designed to revolutionize the way you interact with your devices and enhance your daily tasks.",
+  "announcements": [
+    {
+      "announcement": "Experience the power of Apple Intelligence through its advanced writing tools, making your communication more effective and efficient.",
+      "from": "00:00:10",
+      "to": "00:00:36",
+      "subDetails": [
+        {
+          "excitedNarration": "Effortlessly adjust the tone of your emails to perfectly suit any situation, whether you need a friendly, professional, or concise message!",
+          "pointer": "Change email tone",
+          "from": "00:00:16",
+          "to": "00:00:21"
+        },
+        {
+          "excitedNarration": "Elevate your writing with the help of Proofread, ensuring impeccable grammar, word choice, and sentence structure in every email!",
+          "pointer": "Proofread for improved writing",
+          "from": "00:00:27",
+          "to": "00:00:31"
+        },
+        {
+          "excitedNarration": "Quickly summarize lengthy emails by highlighting the key points and adding them as a handy TLDR section!",
+          "pointer": "Add TLDR to emails",
+          "from": "00:00:32",
+          "to": "00:00:36"
+        }
+      ]
+    },
+    {
+      "announcement": "Unleash your creativity with Apple Intelligence's cutting-edge image creation tools, bringing your ideas to life like never before.",
+      "from": "00:00:39",
+      "to": "00:01:57",
+      "subDetails": [
+        {
+          "excitedNarration": "Create any emoji you can imagine with Genmoji, from a surfing T-Rex to a squirrel DJ, the only limit is your imagination!",
+          "pointer": "Generate custom emojis",
+          "from": "00:00:46",
+          "to": "00:01:05"
+        },
+        {
+          "excitedNarration": "Step into the Image Playground and watch as your text prompts come alive as stunning images in just seconds, with various styles at your fingertips!",
+          "pointer": "Create images from text prompts",
+          "from": "00:01:08",
+          "to": "00:01:31"
+        },
+        {
+          "excitedNarration": "Witness the magic as your rough sketches transform into polished, professional-looking images, thanks to the power of Apple Intelligence!",
+          "pointer": "Transform sketches into polished images",
+          "from": "00:01:49",
+          "to": "00:01:57"
+        }
+      ]
+    },
+    {
+      "announcement": "Experience a revolutionary way to interact with Siri, now powered by Apple Intelligence for more natural and intuitive conversations.",
+      "from": "00:01:58",
+      "to": "00:03:16",
+      "subDetails": [
+        {
+          "excitedNarration": "Talk to Siri like you would with a friend, enjoying natural, free-flowing conversations thanks to its advanced language understanding!",
+          "pointer": "Natural language interactions with Siri",
+          "from": "00:02:11",
+          "to": "00:02:25"
+        },
+        {
+          "excitedNarration": "Siri now remembers the context of your conversations, allowing for seamless follow-up queries without skipping a beat!",
+          "pointer": "Siri remembers context for follow-up queries",
+          "from": "00:02:31",
+          "to": "00:02:42"
+        },
+        {
+          "excitedNarration": "Experience a truly personalized assistant as Siri draws information from your photos, calendar, messages, and more to provide tailored assistance just for you!",
+          "pointer": "Personalized information retrieval",
+          "from": "00:02:43",
+          "to": "00:03:11"
+        },
+        {
+          "excitedNarration": "Communicate with Siri discreetly by typing your queries, perfect for those moments when you need a silent interaction!",
+          "pointer": "Type to Siri for silent communication",
+          "from": "00:03:12",
+          "to": "00:03:16"
+        }
+      ]
+    },
+    {
+      "announcement": "Apple Intelligence takes personalization to new heights, delivering features that cater to your unique needs and preferences.",
+      "from": "00:03:17",
+      "to": "00:03:55",
+      "subDetails": [
+        {
+          "excitedNarration": "Never miss what matters most as priority notifications intelligently sort your alerts, placing the most important ones at the top!",
+          "pointer": "Priority notifications based on user preferences",
+          "from": "00:03:25",
+          "to": "00:03:33"
+        },
+        {
+          "excitedNarration": "Become the star of your own automatically generated memory movies, as Apple Intelligence crafts personalized films from your cherished photos!",
+          "pointer": "Personalized memory movies from user's photos",
+          "from": "00:03:34",
+          "to": "00:03:55"
+        }
+      ]
+    }
+  ]
+}

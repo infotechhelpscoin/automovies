@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Processor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.5.0"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">YouTube Video Processor</h1>
+        
+        <div class="row">
+            <div class="column">
+                <div class="form-group">
+                    <label for="jsonInput">JSON Input</label>
+                    <textarea id="jsonInput" class="form-control">
+{
+    "youtubeUrl": "https://www.youtube.com/watch?v=Q_EYoV1kZWk",
+    "outputVideoPath": "/video.mp4",
+    "outputAudioPath": "/audio.mp3",
+    "transcriptionPath": "/transcription.vtt",
+    "bestPartsPath": "/best_parts.json",
+    "prompt": "Extract the best parts of the video.",
+    "downloadVideo": true,
+    "generateCaptions": true,
+    "generateBestParts": true
+}
+                    </textarea>
+                </div>
+                
+                <button type="button" class="btn btn-secondary" onclick="populateForm()">Populate Form</button>
+            </div>
+            <div class="column">
+                <form class="form-container" hx-post="/process-video" hx-trigger="submit" hx-target="#response" hx-swap="innerHTML">
+                    <div class="form-group">
+                        <label for="youtubeUrl">YouTube URL</label>
+                        <input type="text" id="youtubeUrl" name="youtubeUrl" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="outputVideoPath">Output Video File Path</label>
+                        <input type="text" id="outputVideoPath" name="outputVideoPath" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="outputAudioPath">Output Audio File Path</label>
+                        <input type="text" id="outputAudioPath" name="outputAudioPath" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transcriptionPath">Transcription Output File Path</label>
+                        <input type="text" id="transcriptionPath" name="transcriptionPath" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bestPartsPath">Best Parts Output File Path</label>
+                        <input type="text" id="bestPartsPath" name="bestPartsPath" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prompt">Prompt</label>
+                        <textarea id="prompt" name="prompt" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="downloadVideo" name="downloadVideo" type="checkbox" class="form-check-input">
+                        <label for="downloadVideo" class="form-check-label">Download Video</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="generateCaptions" name="generateCaptions" type="checkbox" class="form-check-input">
+                        <label for="generateCaptions" class="form-check-label">Generate Captions</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="generateBestParts" name="generateBestParts" type="checkbox" class="form-check-input">
+                        <label for="generateBestParts" class="form-check-label">Generate Best Parts</label>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+                <div id="response"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function populateForm() {
+            const jsonInput = document.getElementById('jsonInput').value;
+            const formData = JSON.parse(jsonInput);
+
+            document.getElementById('youtubeUrl').value = formData.youtubeUrl;
+            document.getElementById('outputVideoPath').value = formData.outputVideoPath;
+            document.getElementById('outputAudioPath').value = formData.outputAudioPath;
+            document.getElementById('transcriptionPath').value = formData.transcriptionPath;
+            document.getElementById('bestPartsPath').value = formData.bestPartsPath;
+            document.getElementById('prompt').value = formData.prompt;
+            document.getElementById('downloadVideo').checked = formData.downloadVideo;
+            document.getElementById('generateCaptions').checked = formData.generateCaptions;
+            document.getElementById('generateBestParts').checked = formData.generateBestParts;
+        }
+    </script>
+</body>
+</html>
