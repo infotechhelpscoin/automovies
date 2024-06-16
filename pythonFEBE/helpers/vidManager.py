@@ -2,8 +2,8 @@ import json
 import subprocess
 import os
 import asyncio
-from TTS import generateAudio
-from jsonConvert import convertToFormat
+from .TTS import generateAudio
+from .jsonConvert import convertToFormat
 from moviepy.editor import VideoFileClip, concatenate_videoclips, AudioFileClip
 
 async def create_clips(json_req, video_path):
@@ -189,5 +189,5 @@ def runVidGen(json_path,video_path,outVideoPath):
     return count
       
 
-runVidGen('out2.json','video1.mp4','finalVidPath.mp4')
+#runVidGen('out2.json','video1.mp4','finalVidPath.mp4')
 

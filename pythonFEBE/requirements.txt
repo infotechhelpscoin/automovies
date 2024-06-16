@@ -3,6 +3,7 @@ openai
 anthropic
 python-dotenv
 deepgram-sdk
+deepgram_captions
 httpx
 verboselogs
 pytube
