@@ -18,11 +18,11 @@
                     <textarea id="jsonInput" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="10">
 {
     "youtubeUrl": "https://www.youtube.com/watch?v=Q_EYoV1kZWk",
-    "outputVideoPath": "/video.mp4",
-    "outputAudioPath": "/audio.mp3",
-    "transcriptionPath": "/transcription.vtt",
-    "bestPartsPath": "/best_parts.json",
-    "finalGenVideo": "Extract the best parts of the video.",
+    "outputVideoPath": "video.mp4",
+    "outputAudioPath": "audio.mp3",
+    "transcriptionPath": "transcription.vtt",
+    "bestPartsjson": "best_parts.json",
+    "finalGenVideoPath": "final_Video_Path",
     "downloadVideo": true,
     "generateCaptions": true,
     "generateBestParts": true
@@ -55,13 +55,13 @@
                     </div>
 
                     <div>
-                        <label for="bestPartsPath" class="block text-sm font-medium text-gray-700">Best Parts Output File Path</label>
-                        <input type="text" id="bestPartsPath" name="bestPartsPath" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <label for="bestPartsjson" class="block text-sm font-medium text-gray-700">Best Parts Json</label>
+                        <textarea id="bestPartsjson" name="bestPartsjson" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
                     </div>
 
                     <div>
-                        <label for="finalGenVideo" class="block text-sm font-medium text-gray-700">Final Gen Video Path</label>
-                        <textarea id="finalGenVideo" name="finalGenVideo" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                        <label for="finalGenVideoPath" class="block text-sm font-medium text-gray-700">Final Gen Video Path</label>
+                        <textarea id="finalGenVideoPath" name="finalGenVideoPath" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
                     </div>
 
                     <div class="flex items-start">
@@ -109,8 +109,8 @@
             document.getElementById('outputVideoPath').value = formData.outputVideoPath;
             document.getElementById('outputAudioPath').value = formData.outputAudioPath;
             document.getElementById('transcriptionPath').value = formData.transcriptionPath;
-            document.getElementById('bestPartsPath').value = formData.bestPartsPath;
-            document.getElementById('finalGenVideo').value = formData.finalGenVideo;
+            document.getElementById('bestPartsjson').value = formData.bestPartsjson;
+            document.getElementById('finalGenVideoPath').value = formData.finalGenVideoPath;
             document.getElementById('downloadVideo').checked = formData.downloadVideo;
             document.getElementById('generateCaptions').checked = formData.generateCaptions;
             document.getElementById('generateBestParts').checked = formData.generateBestParts;

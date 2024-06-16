@@ -13,14 +13,14 @@ def index():
     return render_template('index.html')
 
 @app.route('/process-video', methods=['POST'])
-def process_video():
+async def process_video():
     # Get the form data from the request
     url = request.form.get('youtubeUrl')
     video_path = request.form.get('outputVideoPath')
     audio_path = request.form.get('outputAudioPath')
     transcription_path = request.form.get('transcriptionPath')
-    best_parts_path = request.form.get('bestPartsPath')
-    finalGenVideo = request.form.get('finalGenVideo')
+    bestPartsjson = request.form.get('bestPartsjson')
+    finalGenVideoPath = request.form.get('finalGenVideoPath')
     download_video = request.form.get('downloadVideo') == 'on'
     generate_captions = request.form.get('generateCaptions') == 'on'
     generate_best_parts = request.form.get('generateBestParts') == 'on'
@@ -38,7 +38,7 @@ def process_video():
         return f'''
             <div>
                 <button onclick="copyContent()">Copy</button>
-                <p id="content" style="display: none;">{captions}</p>
+                <p id="content">{captions}</p>
             </div>
 
             <script>
@@ -54,15 +54,12 @@ def process_video():
             }}
             </script>
         '''
-    if False:
 
-        if  generate_best_parts:
-            
-            
-            asyncio.run(runVidGen(parsed_data, count, finalGenVideo))
-            return f'''{count} '''
-            # response = getBestParts(title, captions, best_parts_path)
-            # print(response)
+    if  generate_best_parts:
+        await runVidGen(bestPartsjson, video_path, finalGenVideoPath)
+        return f''' as'''
+        # response = getBestParts(title, captions, bestPartsjson)
+        # print(response)
     
 
     
@@ -77,8 +74,8 @@ def process_video():
         <p>Video Path: {video_path}</p>
         <p>Audio Path: {audio_path}</p>
         <p>Transcription Path: {transcription_path}</p>
-        <p>Best Parts Path: {best_parts_path}</p>
-        <p>finalGenVideo: {finalGenVideo}</p>
+        <p>Best Parts Path: {bestPartsjson}</p>
+        <p>finalGenVideoPath: {finalGenVideoPath}</p>
         <p>Download Video: {download_video}</p>
         <p>Generate Captions: {generate_captions}</p>
         <p>Generate Best Parts: {generate_best_parts}</p>

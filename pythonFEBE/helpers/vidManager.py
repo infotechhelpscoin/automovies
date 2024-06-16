@@ -38,28 +38,19 @@ def file_exists(file_path):
     if not os.path.exists(file_path):
         raise Exception(f"File not found: {file_path}")
 
-def merge_audio_video(num_clips):
+async def merge_audio_video(num_clips):
     final_parts = []
+    final_clip_path = "final_clip.mp4"
+    concat_list_path='concat_list.txt'
+    with open(concat_list_path, 'w') as f:
+        for i in range(1, num_clips + 1):
+            concat_list_path = f'concat_list.txt'
+            video_clip_path = f"{i}.mp4"
+            intro_video_path = f"intro_video_{i}.mp4"
+            f.write(f"file 'intro_video_{i}.mp4'\n")
+            f.write(f"file '{i}.mp4'\n")
 
-    for i in range(1, num_clips + 1):
-        video_clip_path = f"{i}.mp4"
-        intro_video_path = f"intro_video_{i}.mp4"
-        final_clip_path = f"final_clip_{i}.mp4"
-
-        # Ensure video clips are present
-        file_exists(video_clip_path)
-
-        # Concatenation lists
-        concat_list_path = f'concat_list_{i}.txt'
-        with open(concat_list_path, 'w') as f:
-            f.write(f"file '{intro_video_path}'\n")
-            f.write(f"file '{video_clip_path}'\n")
-
-        # Check if intro videos are created
-        file_exists(intro_video_path)
-
-        # Concatenate intro and main video
-        subprocess.run([
+    subprocess.run([
             'ffmpeg',
             '-f', 'concat',
             '-safe', '0',
@@ -67,35 +58,57 @@ def merge_audio_video(num_clips):
             '-c', 'copy','-y',
             final_clip_path
         ], check=True)
+       
+    #     # Ensure video clips are present
+    #     # file_exists(video_clip_path)
 
-        # Ensure final clip was created
-        file_exists(final_clip_path)
+    #     # Concatenation lists
+    #     concat_list_path = f'concat_list_{i}.txt'
+    #     with open(concat_list_path, 'w') as f:
+    #         f.write(f"file '{intro_video_path}'\n")
+    #         f.write(f"file '{video_clip_path}'\n")
 
-        final_parts.append(final_clip_path)
+    #     # Check if intro videos are created
+    #     file_exists(intro_video_path)
+    #     print(f"intro_video_{i}.mp4")
+    #     # Concatenate intro and main video
+    #     subprocess.run([
+    #         'ffmpeg',
+    #         '-f', 'concat',
+    #         '-safe', '0',
+    #         '-i', concat_list_path,
+    #         '-c', 'copy','-y',
+    #         final_clip_path
+    #     ], check=True)
 
-    # Final concatenation of all parts
-    final_output = 'final_output.mp4'
-    with open('final_concat_list.txt', 'w') as f:
-        for part in final_parts:
-            f.write(f"file '{part}'\n")
+    #     # Ensure final clip was created
+    #     file_exists(final_clip_path)
 
-    subprocess.run([
-        'ffmpeg',
-        '-f', 'concat',
-        '-safe', '0',
-        '-i', 'final_concat_list.txt',
-        '-c', 'copy','-y',
-        final_output
-    ], check=True)
+    #     final_parts.append(final_clip_path)
+    
+    # # Final concatenation of all parts
+    # final_output = 'final_output.mp4'
+    # with open('final_concat_list.txt', 'w') as f:
+    #     for part in final_parts:
+    #         f.write(f"file '{part}'\n")
 
-    # Check final output
-    file_exists(final_output)
+    # subprocess.run([
+    #     'ffmpeg',
+    #     '-f', 'concat',
+    #     '-safe', '0',
+    #     '-i', 'final_concat_list.txt',
+    #     '-c', 'copy','-y',
+    #     final_output
+    # ], check=True)
 
-    # Cleanup
-    os.remove('final_concat_list.txt')
-    for i in range(1, num_clips + 1):
-        os.remove(f'concat_list_{i}.txt')
-def generate_intro_videos(num_clips, video_path):
+    # # Check final output
+    # file_exists(final_output)
+
+    # # Cleanup
+    # os.remove('final_concat_list.txt')
+    # for i in range(1, num_clips + 1):
+    #     os.remove(f'concat_list_{i}.txt')
+async def generate_intro_videos(num_clips, video_path):
     for i in range(1, num_clips + 1):
         video_clip_path = f"{i}.mp4"
         audio_clip_path = f"{i}.mp3"
@@ -109,18 +122,18 @@ def generate_intro_videos(num_clips, video_path):
         #     intro_video_path
         # ], check=True)
 
-        subprocess.run([ # with loop
-            'ffmpeg',
-            '-stream_loop', '-1',
-            '-i', video_clip_path,
-            '-i', audio_clip_path,
-            '-c:v', 'copy',
-            '-map', '0:v:0',
-            '-map', '1:a:0',
-            '-shortest',
-            '-y',
-            intro_video_path
-        ], check=True)
+    subprocess.run([
+        'ffmpeg',
+        '-i', video_clip_path,
+        '-i', audio_clip_path,
+        '-c:v', 'copy',
+        '-c:a', 'aac',
+        '-map', '0:v:0',
+        '-map', '1:a:0',
+        '-shortest',
+        '-y',
+        intro_video_path
+    ], check=True)
 
 def merge_all_segments(num_clips):
 
@@ -173,20 +186,26 @@ def merge_all_segments2(num_clips):
 
 # Example usage
 
+async def runVidGen(jsonBestParts, video_path, finalGenVideoPath):
+    # ...
+    # jsonFromFile = open(json_path, "r").read()
+    # jsonFromFile = json.loads(jsonBestParts)
+    
 
-def runVidGen(json_path,video_path,outVideoPath):
-    jsonFromFile = open(json_path, "r").read()
-    json_b = convertToFormat(jsonFromFile)
+    json_b = convertToFormat(jsonBestParts)
     parsed_data = json.loads(json_b)
     count = len(parsed_data['key_segments'])
+    print(count)
     # num_clips = 5
     # video_path = 'output_video.mp4'
+    await generate_intro_videos(3, video_path)
+    await merge_audio_video(3)  # Then merge them as previously defined
+
     if False:
         asyncio.run(create_clips(parsed_data,video_path))
-        generate_intro_videos(count, video_path)  # Ensure intro videos are generated
-   # merge_audio_video(num_clips)  # Then merge them as previously defined
-    merge_all_segments2(3)  
-    return count
+        asyncio.run(generate_intro_videos(3, video_path))  # Ensure intro videos are generated
+   # merge_all_segments2(3)  
+    return 'count'
       
 
 #runVidGen('out2.json','video1.mp4','finalVidPath.mp4')
