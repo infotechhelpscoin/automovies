@@ -28,39 +28,41 @@ def process_video():
     # Call the functions based on the selected options
     title = ''
     captions = ''
-
+    print(download_video,generate_captions,generate_best_parts)
     if download_video:
         title = download_yt_vid(url, video_path, audio_path)
-
-    if generate_captions:      
+        return 'success'
+    if generate_captions:  
+        print('generate_captions')
         captions = transcribe_to_webvtt(audio_path, transcription_path)
         return f'''
-        <div>
-            <button onclick="copyContent()">Copy</button>
-            <p id="content" style="display: none;">{captions}</p>
-        </div>
+            <div>
+                <button onclick="copyContent()">Copy</button>
+                <p id="content" style="display: none;">{captions}</p>
+            </div>
 
-        <script>
-        function copyContent() {{
-            var content = document.getElementById("content");
-            var range = document.createRange();
-            range.selectNode(content);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            document.execCommand("copy");
-            window.getSelection().removeAllRanges();
-            alert("Content copied to clipboard!");
-        }}
-        </script>
-    '''
+            <script>
+            function copyContent() {{
+                var content = document.getElementById("content");
+                var range = document.createRange();
+                range.selectNode(content);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand("copy");
+                window.getSelection().removeAllRanges();
+                alert("Content copied to clipboard!");
+            }}
+            </script>
+        '''
+    if False:
 
-    if  generate_best_parts:
-        
-        
-        asyncio.run(runVidGen(parsed_data, count, finalGenVideo))
-        return f'''{count} '''
-        # response = getBestParts(title, captions, best_parts_path)
-        # print(response)
+        if  generate_best_parts:
+            
+            
+            asyncio.run(runVidGen(parsed_data, count, finalGenVideo))
+            return f'''{count} '''
+            # response = getBestParts(title, captions, best_parts_path)
+            # print(response)
     
 
     

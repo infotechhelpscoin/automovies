@@ -19,6 +19,7 @@ AUDIO_FILE = "preamble.wav"
 
 def transcribe_to_webvtt(audio_path,vttfile):
     try:
+        print('transcribe_to_webvtt',audio_path,vttfile)
         # STEP 1 Create a Deepgram client using the API key in the environment variables
         config: DeepgramClientOptions = DeepgramClientOptions(
             verbose=logging.SPAM,

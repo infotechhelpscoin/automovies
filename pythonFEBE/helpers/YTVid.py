@@ -1,40 +1,62 @@
 # YTvid.py
-from pytube import YouTube
-import subprocess
 import os
-
+import subprocess
+from pytube import YouTube
+import json
 
 def download_yt_vid(url, out_filename, audio_filename):
-    # Download the video using pytube
     try:
         yt = YouTube(url)
-        video = yt.streams.get_highest_resolution()
-        video_title = yt.title
+        video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+        video_info = {
+            "title": yt.title,
+            "description": yt.description,
+            "thumbnail_url": yt.thumbnail_url
+        }
+        
         # Download the video to a temporary file
         temp_path = video.download(filename='tempVid')
-        print(f"Video downloaded to tempVid")
-        # Rename the downloaded video file
-        os.rename(temp_path, out_filename)
-        print(f"Video downloaded to {out_filename}")
-
-        # Convert the video to WAV using ffmpeg
-        command = [
+        
+        # Convert the video using FFmpeg
+        video_command = [
             'ffmpeg',
-            '-i', out_filename,          # Input file
-            #'-acodec', 'adpcm_ms',       # ADPCM codec for some compression
-            #'-acodec', 'pcm_s16le',      # Audio codec
-            '-codec:a','libmp3lame','-b:a','128k', # mp3
-            '-ar', '44100',              # Audio sample rate
-            audio_filename               # Output file
+            '-i', temp_path,            # Input file
+            '-c:v', 'libx264',          # Video codec (H.264)
+            '-preset', 'medium',        # Encoding preset
+            '-crf', '23',               # Constant Rate Factor (quality)
+            '-c:a', 'aac',              # Audio codec (AAC)
+            '-b:a', '128k',             # Audio bitrate
+            '-movflags', '+faststart','-y',  # Optimize for streaming
+            out_filename                # Output file
         ]
-
-        subprocess.run(command, check=True)
-
-        print(f"Video downloaded and audio extracted to {audio_filename}")
-        return video_title
-
+        subprocess.run(video_command, check=True)
+        
+        # Remove the temporary video file
+        os.remove(temp_path)
+        
+        print(f"Video downloaded and converted: {out_filename}")
+        
+        # Extract the audio using FFmpeg
+        audio_command = [
+            'ffmpeg',
+            '-i', out_filename,         # Input file
+            '-vn',                      # Disable video
+            '-acodec', 'libmp3lame',    # Audio codec (MP3)
+            '-b:a', '128k',             # Audio bitrate
+            '-ar', '44100', '-y',            # Audio sample rate
+            audio_filename              # Output file
+        ]
+        subprocess.run(audio_command, check=True)
+        
+        print(f"Audio extracted: {audio_filename}")
+        
+        # Convert the video information to JSON
+        video_json = json.dumps(video_info)
+        
+        return video_json
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {str(e)}")
+        return None
 
 
 
