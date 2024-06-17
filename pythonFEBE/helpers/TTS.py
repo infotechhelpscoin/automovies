@@ -12,9 +12,6 @@ load_dotenv()
 
 
 
-
-
-
 async def generateAudio(text,outfilename,model="aura-asteria-en"):
     SPEAK_OPTIONS = {"text": text}
     filename = outfilename

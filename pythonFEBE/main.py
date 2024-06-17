@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from helpers.STT import transcribe_to_webvtt
 from helpers.YTVid import download_yt_vid
 from helpers.llm import getBestParts
-from helpers.vidManager import runVidGen
+from helpers.vidManager import runVidGen,genAudAndMergeVid
 from helpers.scrollVid import create_video_from_url
 import asyncio
 import json
@@ -69,13 +69,10 @@ async def process_video():
             #html_response,video_length,screenshot_path,savepath =await create_video_from_url(url,video_path)
             return html_response
         if  generate_best_parts:
-
-
-            return
+ #          print(bestPartsjson,audio_path,video_path,finalGenVideoPath)
+            await genAudAndMergeVid(bestPartsjson,audio_path,video_path,finalGenVideoPath)
+            return 'output'
     
-    
-
-
     # Return HTML content
     html_response = f"""
     <div>

@@ -2,9 +2,9 @@ import json
 import subprocess
 import os
 import asyncio
-from .TTS import generateAudio
-from .jsonConvert import convertToFormat
-from moviepy.editor import VideoFileClip, concatenate_videoclips, AudioFileClip
+import cloudinary
+import asyncio
+from .cloudUpload import upload_image
 
 async def create_clips(json_req, video_path):
     # Load JSON data from the string
@@ -236,5 +236,20 @@ async def MergeAudVid(audPath,vidPath,FinalVidPath):
 
 
 async def genAudAndMergeVid(text,audPath,vidPath,FinalVidPath):
+    print('reached')
     await generateAudio(text,audPath)
     await MergeAudVid(audPath,vidPath,FinalVidPath)
+    response = await upload_image(FinalVidPath)
+
+textp='''Embark on an exhilarating journey into the world of self-operating computer frameworks with this groundbreaking GitHub repo. Designed with a modular and extensible architecture, this framework empowers users to create and seamlessly integrate their own components, unleashing a new era of automation possibilities.
+
+Harnessing the power of Java, this framework ensures cross-platform compatibility, allowing your self-operating components to run flawlessly across various systems. With a wealth of templates and examples at your fingertips, you'll be able to jumpstart your journey into creating your own self-operating masterpieces with ease.
+
+The run manager, a key feature of this framework, streamlines the organization and control of your self-operating components, ensuring smooth execution and optimal performance. Debugging and troubleshooting become a breeze with the built-in logging and debugging facilities, providing you with the tools needed to perfect your creations.
+
+As an open-source project, this framework thrives on collaboration and community contributions. Join a vibrant community of developers who are pushing the boundaries of what's possible in the realm of self-operating systems. With the exciting potential to revolutionize automation, this GitHub repo is your gateway to a future where software operates autonomously, opening up a world of endless possibilities. '''
+audPathp='audio.mp3'
+vidPathp='video.mp4'
+finalvPath='final_Video_Path.mp4'
+
+#asyncio.run(genAudAndMergeVid(textp,audPathp,vidPathp,finalvPath))
