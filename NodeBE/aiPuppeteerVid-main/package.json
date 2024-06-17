@@ -2,10 +2,10 @@
   "name": "your-project-name",
   "version": "1.0.0",
   "description": "Your project description",
-  "main": "./src/app.js",  
+  "main": "./src/app.js",
   "scripts": {
     "start": "node ./src/app.js",
-    "build":"npm install",
+    "build": "npm install",
     "test": "jest"
   },
   "author": "Your Name",
@@ -23,7 +23,7 @@
     "nedb": "^1.8.0",
     "node-fetch": "^3.3.2",
     "path": "^0.12.7",
-    "puppeteer": "^22.7.1",
+    "puppeteer": "^22.11.0",
     "puppeteer-screen-recorder": "^3.0.3",
     "say": "^0.16.0",
     "uid": "^2.0.2"

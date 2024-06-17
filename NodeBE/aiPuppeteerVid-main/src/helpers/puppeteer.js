@@ -19,9 +19,12 @@ const Config = {
 };
 
 async function startBrowser() {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  return { browser: browser, page: page };
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: true
+});const page = await browser.newPage();
+  const recorder = new PuppeteerScreenRecorder(page, Config);
+  return { browser: browser, page: page,recorder:recorder };
 }
 
 async function startRecording(page, id) {
