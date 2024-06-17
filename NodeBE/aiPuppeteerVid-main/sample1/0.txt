@@ -1,0 +1,1 @@
+The webpage is promoting Meta Llama 3, a technology by Meta for advancing AI. It highlights that the Llama 3 models are available with 8 billion (8B) and 70 billion (70B) pretrained versions, which are instruction-tuned to support various applications. The page provides an option to get started and learn more, along with a call to experience Llama 3 on Meta AI.

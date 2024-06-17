@@ -1,0 +1,31 @@
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "description": "Your project description",
+  "main": "./src/app.js",  
+  "scripts": {
+    "start": "node ./src/app.js",
+    "build":"npm install",
+    "test": "jest"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "@deepgram/captions": "^1.2.0",
+    "@deepgram/sdk": "^1.21.0",
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
+    "mongodb": "^4.14.0",
+    "nedb": "^1.8.0",
+    "node-fetch": "^3.3.2",
+    "path": "^0.12.7",
+    "puppeteer": "^22.7.1",
+    "puppeteer-screen-recorder": "^3.0.3",
+    "say": "^0.16.0",
+    "uid": "^2.0.2"
+  }
+}

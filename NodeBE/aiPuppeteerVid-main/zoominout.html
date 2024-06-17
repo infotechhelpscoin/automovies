@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automatic Zoom Effect</title>
+<style>
+  .img-hover-zoom--point-zoom {
+    width: 1000px; /* Fixed width */
+    height: 900px; /* Fixed height */
+    overflow: hidden; /* Hide overflow to ensure image remains within container */
+    position: relative; /* Positioning context for absolute positioning of image */
+}
+
+.img-hover-zoom--point-zoom img {
+    width: 100%; /* Ensure image takes full width of container */
+    height: 100%; /* Ensure image takes full height of container */
+    position: absolute; /* Position image absolutely within container */
+    top: 0; /* Position image at the top of the container */
+    left: 0; /* Position image at the left of the container */
+    transform-origin: center; /* Set transform origin */
+    transition: transform 1s, filter .5s ease-out; /* Transition effect */
+}
+
+/* Zoomed-in state */
+.zoomed-in {
+    transform: scale(1.5); /* Adjust zoom scale */
+}
+
+</style>
+</head>
+<body>
+
+<div class="img-hover-zoom img-hover-zoom--point-zoom" id="imageContainer">
+  <img src="screenshot.jpg" alt="Image 1" id="image">
+</div>
+
+<script>
+  // Function to fetch data from API
+  function fetchData(param) {
+    const url = `http://localhost:3000/${param}`; // Correctly constructed URL with template literals
+    return fetch(url) // Use the constructed URL here
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .catch(error => console.error('There was a problem with your fetch operation:', error));
+}
+
+
+  // Function to initialize the zooming sequence with fetched data
+  function initializeZoom(images, durationZoomIn) {
+    durationZoomOut = [1000, 1000, 1000,1000,1000]; 
+    let currentImageIndex = 0;
+
+    function zoomIn() {
+      const image = document.getElementById('image');
+      image.src = images[currentImageIndex];
+      image.classList.add('zoomed-in');
+      setTimeout(zoomOut, 1000);
+    }
+
+    function zoomOut() {
+      const image = document.getElementById('image');
+      image.classList.remove('zoomed-in');
+      currentImageIndex = (currentImageIndex + 1) % images.length;
+      setTimeout(zoomIn, durationZoomIn[currentImageIndex]);
+    }
+
+    zoomIn(); // Start the zooming sequence
+  }
+
+  // Fetch data and initialize
+  window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const images = [];
+    const times = [];
+    
+    // Loop through the query parameters and populate the images and times arrays
+    for (let i = 1; i <= 5; i++) {
+        const imageParam = urlParams.get(`image${i}`);
+        const timeParam = urlParams.get(`time${i}`);
+        
+        if (imageParam && timeParam) {
+            images.push(imageParam);
+            times.push(parseInt(timeParam)); // Convert time to integer if needed
+        } else {
+            console.error(`Query parameter "image${i}" or "time${i}" is missing.`);
+        }
+    }
+
+    if (images.length > 0 && times.length > 0) {
+        initializeZoom(images, times);
+    } else {
+        console.error('No valid image or time query parameters found.');
+    }
+};
+
+</script>
+
+
+
+</body>
+</html>

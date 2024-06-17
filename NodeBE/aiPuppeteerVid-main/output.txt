@@ -1,0 +1,517 @@
+----- src/app.js -----
+const { status } = require("express/lib/response");
+const { dbsearch, dbupdate } = require("./helpers/mongohelper");
+const {
+  startRecording,
+  URLScreenshot,
+  stopRecording,
+  startBrowser,
+  stopBrowser,
+  URLScrollScreenshot,
+  runContent,
+} = require("./helpers/puppeteer");
+const { saveImageInfo } = require("./helpers/openai");
+const { mergeAndUpload } = require("./helpers/mergeAndUpload");
+const { saveSpeech } = require("./helpers/deepgram");
+const path = require('path');
+
+const prompt = {
+  SummarisePage: "Summarize the content of the webpage shown in the image.",
+};
+
+async function runMain() {
+  let requests = await dbsearch('RecordingVids', { status: 'NotPicked' });
+  console.log('Retrieved requests:', requests);
+
+  for (let i = 0; i < requests.length; i++) {
+    const r = requests[i];
+    console.log('Processing request:', r);
+
+    let { browser, page } = await startBrowser();
+    console.log('Browser started for request:', r.id);
+
+    let content = [];
+    if (r.URLs && r.URLs.length > 0) {
+      for (let j = 0; j < r.URLs.length; j++) {
+        const url = r.URLs[j];
+        console.log('Processing URL:', url);
+        console.log(r.id);
+
+        const screenshotsPath = await URLScrollScreenshot(page, url, `./${r.id}/${j}.jpg`);
+        console.log('Screenshots captured for URL:', url);
+
+        for (let k = 0; k < screenshotsPath.length; k++) {
+          const s = screenshotsPath[k];
+          const basename = path.basename(s, path.extname(s));
+          console.log(`Basename without extension: ${basename}`);
+
+          const text = await saveImageInfo({
+            path: s,
+            prompt: prompt.SummarisePage,
+            saveFilePath: `./${r.id}/${basename}.txt`,
+          });
+          await saveSpeech(text, `./${r.id}/${basename}.mp3`, `./${r.id}/${basename}.srt`);
+
+          content.push({
+            srt: `${basename}.srt`,
+            mp3: `${basename}.mp3`,
+            screenshot: `${basename}.jpg`,
+          });
+        }
+      }
+
+      let recorder = await startRecording(page, r.id);
+      await runContent(page, content);
+      await stopRecording(recorder);
+      await stopBrowser(browser);
+    } else {
+      console.log('No URLs found for request:', r.id);
+    }
+
+    console.log('Recording stopped for request:', r.id);
+
+    const fileurl = await mergeAndUpload(r.id);
+    console.log('Files merged and uploaded for request:', r.id);
+
+    await dbupdate('RecordingVids', { id: r.id }, { vidURL: fileurl, status: 'Completed' });
+    console.log('Database updated for request:', r.id);
+  }
+
+  console.log('All requests processed successfully!');
+}
+
+runMain();
+
+----- src/helpers/deepgram.js -----
+const https = require("https");
+const fs = require("fs");
+const path = require('path');
+const { Deepgram } = require('@deepgram/sdk');
+const { webvtt,srt } = require('@deepgram/captions');
+
+const deepgram = new Deepgram('a7056d8828505c8de14a6210f133bcdb1efc21f2');
+
+async function saveSpeech(text, audioFilePath, srtPath) {
+  try {
+    const url = "https://api.deepgram.com/v1/speak?model=aura-asteria-en";
+    const apiKey = "a7056d8828505c8de14a6210f133bcdb1efc21f2";
+
+    const data = JSON.stringify({ text: text });
+
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await new Promise((resolve, reject) => {
+      const req = https.request(url, options, (res) => {
+        if (res.statusCode !== 200) {
+          console.error(`HTTP error! Status: ${res.statusCode}`);
+          reject(new Error(`HTTP error! Status: ${res.statusCode}`));
+          return;
+        }
+
+        const dest = fs.createWriteStream(audioFilePath);
+        res.pipe(dest);
+        dest.on("finish", () => {
+          console.log("File saved successfully.");
+          resolve();
+        });
+      });
+
+      req.on("error", (error) => {
+        console.error("Error:", error);
+        reject(error);
+      });
+
+      req.write(data);
+      req.end();
+    });
+
+    const response = await deepgram.transcription.preRecorded({
+      buffer: fs.readFileSync(audioFilePath),
+      mimetype: 'audio/mp3',
+    }, {
+      punctuate: true,
+      utterances:true,
+      model: 'nova',
+      language: 'en-US',
+    });
+
+    const captionsFileName = path.basename(srtPath);
+    const folderPath = path.dirname(srtPath);
+
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+    const captionsFilePath = path.join(folderPath, captionsFileName);
+    
+// Check if the file exists and delete it
+if (fs.existsSync(captionsFilePath)) {
+  fs.unlinkSync(captionsFilePath);
+}
+    const stream = fs.createWriteStream(captionsFilePath, { flags: "a" });
+    const captions = response.results.channels[0].alternatives[0].transcript;
+    //response.toSRT()
+    let x= srt(response,2);
+    console.log('captionsFileName:', captionsFileName);
+    stream.write(x);
+    stream.end();
+
+    return { audio: audioFilePath, captions: captionsFilePath };
+  } catch (err) {
+    console.error(err);
+    return { audio: null, captions: null };
+  }
+}
+
+
+module.exports = {
+  saveSpeech: saveSpeech
+};
+
+----- src/helpers/mergeAndUpload.js -----
+// mergeandupload.js
+const fs = require('fs');
+const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+
+async function mergeAndUpload(id) {
+  const folderPath = `./${id}`;
+  const videoFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.mp4'));
+  const audioFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.mp3'));
+  const srtFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.srt'));
+
+  const mergedVideoPath = path.join(folderPath, `${id}_merged.mp4`);
+  const mergedAudioPath = path.join(folderPath, `${id}_merged.mp3`);
+
+  // Merge video files
+  let mergeVideo = ffmpeg();
+  videoFiles.forEach(file => {
+    mergeVideo = mergeVideo.input(path.join(folderPath, file));
+  });
+  await new Promise((resolve, reject) => {
+    mergeVideo.mergeToFile(mergedVideoPath)
+      .on('end', resolve)
+      .on('error', reject);
+  });
+
+  // Merge audio files
+  let mergeAudio = ffmpeg();
+  audioFiles.forEach(file => {
+    mergeAudio = mergeAudio.input(path.join(folderPath, file));
+  });
+  await new Promise((resolve, reject) => {
+    mergeAudio.mergeToFile(mergedAudioPath)
+      .on('end', resolve)
+      .on('error', reject);
+  });
+
+  // Merge subtitles into the video
+  await new Promise((resolve, reject) => {
+    ffmpeg(mergedVideoPath)
+      .input(mergedAudioPath)
+      .outputOptions('-c:v copy')
+      .outputOptions('-c:a aac')
+      .outputOptions('-map 0:v')
+      .outputOptions('-map 1:a')
+      .outputOptions('-shortest')
+      .output(path.join(folderPath, `${id}_final.mp4`))
+      .on('end', resolve)
+      .on('error', reject)
+      .run();
+  });
+
+  // Upload the final video (you need to implement the upload logic based on your requirements)
+  const finalVideoPath = path.join(folderPath, `${id}_final.mp4`);
+  // Upload the final video and return the URL or any relevant information
+  // ...
+
+  return 'File URL or any relevant information';
+}
+
+module.exports = {
+  mergeAndUpload: mergeAndUpload
+};
+
+----- src/helpers/mongo.js -----
+const MongoClient = require('mongodb').MongoClient;
+
+class MongoHelper {
+  constructor(url, dbName) {
+    this.url = url;
+    this.dbName = dbName;
+  }
+
+  async connect() {
+    this.client = await MongoClient.connect(this.url, { useNewUrlParser: true, useUnifiedTopology: true });
+    this.db = this.client.db(this.dbName);
+  }
+
+  async disconnect() {
+    await this.client.close();
+  }
+
+  async getCollection(collectionName) {
+    return this.db.collection(collectionName);
+  }
+
+  async getCollectionsList() {
+    return await this.db.listCollections().toArray();
+  }
+
+  async searchCollection(collectionName, query) {
+    const collection = await this.getCollection(collectionName);
+    return await collection.find(query).toArray();
+  }
+
+  async insertIntoCollection(collectionName, document) {
+    const collection = await this.getCollection(collectionName);
+    return await collection.insertOne(document);
+  }
+
+  async updateCollection(collectionName, filter, update) {
+    const collection = await this.getCollection(collectionName);
+    return await collection.updateOne(filter, update);
+  }
+}
+
+module.exports = MongoHelper;
+
+----- src/helpers/mongohelper.js -----
+const MongoHelper = require('./mongo.js');
+
+const mongoURL = 'mongodb+srv://balpreet:ct8bCW7LDccrGAmQ@cluster0.2pwq0w2.mongodb.net/';
+const dbName = 'tradingdb';
+const { ObjectId } = require('mongodb');
+async function dbinsert(collection, values) {
+  const mongoHelper = new MongoHelper(mongoURL, dbName);
+  await mongoHelper.connect();
+  const insertResult = await mongoHelper.insertIntoCollection(collection, values);
+  console.log('Inserted document:', insertResult.insertedId);
+  await mongoHelper.disconnect();
+  return 'Inserted document:' + insertResult.insertedId;
+}
+async function dbsearch(collection, filters) {
+  const mongoHelper = new MongoHelper(mongoURL, dbName);
+  await mongoHelper.connect();
+  const searchResult = await mongoHelper.searchCollection(collection, filters);
+  console.log('Search result:', searchResult);
+  await mongoHelper.disconnect();
+  return searchResult;
+}
+async function dbupdate(collection,filter,values){
+    const mongoHelper = new MongoHelper(mongoURL, dbName);
+    await mongoHelper.connect();
+ const updateResult = await mongoHelper.updateCollection(collection, filter, { $set: values });
+  console.log('Updated document:', updateResult.modifiedCount);
+  await mongoHelper.disconnect();
+    return 'Updated document:'+ updateResult.modifiedCount;
+}
+async function dbgetItem(collectionName, itemId)
+{
+    const mongoHelper = new MongoHelper(mongoURL, dbName);
+    await mongoHelper.connect();
+    const collection = await this.getCollection(collectionName);
+    await mongoHelper.disconnect();
+    return await collection.findOne({ _id: new ObjectId(itemId) });
+}
+module.exports={
+    dbgetItem,dbinsert,dbsearch,dbupdate
+}
+
+----- src/helpers/openai.js -----
+const fs = require("fs");
+const axios = require("axios");
+
+const API_KEY = "sk-proj-RlgfaakTAOkGHEgXNrdhT3BlbkFJE2sPL59MmdLZqmnqRlbq";
+
+
+async function getImageInfo(image) {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${API_KEY}`,
+  };
+
+  let responses = [];
+
+  const payload = {
+    model: "gpt-4o",
+    max_tokens: 4000,
+    messages: [],
+  };
+
+  
+    const imageData = fs.readFileSync(image.path);
+    const base64Image = Buffer.from(imageData).toString("base64");
+
+    payload.messages.push({
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `${image.prompt}`,
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: `data:image/jpeg;base64,${base64Image}`,
+          },
+        },
+      ],
+    });
+
+    if (image.path2) {
+      const imageData2 = fs.readFileSync(image.path2);
+      const base64Image2 = Buffer.from(imageData2).toString("base64");
+
+      payload.messages[payload.messages.length - 1].content.push({
+        type: "image_url",
+        image_url: {
+          url: `data:image/jpeg;base64,${base64Image2}`,
+        },
+      });
+    }
+  
+
+  try {
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      payload,
+      { headers }
+    );
+
+    const responseData = response.data.choices;
+    console.log(responseData[0].message.content);
+
+    return responseData;
+    // responseData.forEach((choice, index) => {
+    //   const answer =
+    //     choice.message.content[0].text === "{"
+    //       ? JSON.parse(choice.message.content[0].text).answer
+    //       : choice.message.content[0].text;
+    //   const formattedAnswer = answer.replace(/({|}|answer:)/g, "").trim();
+
+    //   responses[images[index].name] = formattedAnswer;
+    //   console.log(images[index].name, "Response:", formattedAnswer);
+    // });
+  } catch (error) {
+    console.error("Error during API call:", error.message);
+  }
+
+  return responses;
+}
+async function saveImageInfo(image) {
+  try {
+    const res = await getImageInfo(image);
+    const text = res[0].message.content;
+    fs.writeFileSync(image.saveFilePath, text);
+    return text;
+  } catch (error) {
+    console.error("Error saving image info:", error.message);
+    return null;
+  }
+}
+
+module.exports = { getImageInfo: getImageInfo,saveImageInfo:saveImageInfo };
+
+
+----- src/helpers/puppeteer.js -----
+const puppeteer = require('puppeteer');
+const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
+
+const Config = {
+  followNewTab: true,
+  fps: 60,
+  videoFrame: {
+    width: 1024,
+    height: 768,
+  },
+  videoCrf: 18,
+  videoCodec: 'libx264',
+  videoPreset: 'ultrafast',
+  videoBitrate: 1000,
+  autopad: {
+    color: 'black' | '#35A5FF',
+  },
+  aspectRatio: '4:3',
+};
+
+async function startBrowser() {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  return { browser: browser, page: page };
+}
+
+async function startRecording(page, id) {
+  const recorder = new PuppeteerScreenRecorder(page, Config);
+  await recorder.start(`${id}/${id}.mp4`);
+  return recorder;
+}
+
+async function URLScrollScreenshot(page, URL, path, scrollCount = 3) {
+  await page.goto(URL, { waitUntil: 'networkidle2' });
+  let paths = [];
+  let count = 0;
+
+  async function delay(time) {
+    return new Promise(function(resolve) { 
+      setTimeout(resolve, time)
+    });
+  }
+
+  while (count < scrollCount) {
+    await page.evaluate(() => window.scrollBy(0, 100));
+    await delay(2000); // Wait for 2 seconds after each scroll
+    await page.screenshot({ path: count + '_' + path });
+    paths.push(count + '_' + path);
+    count++;
+  }
+
+  return paths;
+}
+
+async function URLScreenshot(page, URL, path) {
+  await page.goto(URL, { waitUntil: 'networkidle2' });
+  await page.screenshot({ path: path });
+  return path;
+}
+
+async function stopRecording(recorder) {
+  await recorder.stop();
+  return true;
+}
+
+async function stopBrowser(browser) {
+  await browser.close();
+  return true;
+}
+
+async function runContent(page, content) {
+  for (let i = 0; i < content.length; i++) {
+    const item = content[i];
+    await page.goto(`file://${process.cwd()}/${item.screenshot}`);
+    await page.evaluate((item) => {
+      const audio = document.createElement('audio');
+      audio.src = item.mp3;
+      audio.controls = true;
+      document.body.appendChild(audio);
+    }, item);
+    await page.waitForTimeout(5000); // Wait for 5 seconds before moving to the next item
+  }
+}
+
+module.exports = {
+  startRecording: startRecording,
+  URLScreenshot: URLScreenshot,
+  stopRecording: stopRecording,
+  startBrowser: startBrowser,
+  stopBrowser: stopBrowser,
+  URLScrollScreenshot: URLScrollScreenshot,
+  runContent: runContent,
+};
+
