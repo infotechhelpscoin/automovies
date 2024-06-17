@@ -65,7 +65,8 @@ async def process_video():
             # print(response)
     if is_github_url(url):
         if download_video:
-            html_response,video_length,screenshot_path,savepath =await create_video_from_url(url,video_path)
+            html_response =await create_video_from_url(url,video_path)
+            #html_response,video_length,screenshot_path,savepath =await create_video_from_url(url,video_path)
             return html_response
         if  generate_best_parts:
 

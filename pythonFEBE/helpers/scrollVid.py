@@ -4,36 +4,36 @@ import os
 import base64
 
 async def create_video_from_url(url, savepath):
-    result = subprocess.run(
-        ['node', 'helpers/recordBrowser.js', url, savepath],
-        capture_output=True,
-        text=True
-    )
-    if result.returncode == 0:
-        print("Recording completed successfully")
-        print(result.stdout)
-    else:
-        print("Error during recording")
-        print(result.stderr)
-    
-    screenshot = await get_screenshot(
-        {'url': url,
-         'width': 1280,
-         'height': 1280,
-         'format': 'png',
-         'full_size':1,
-         'response_type': 'json',
-         'delay_time': 2000,
-         'timeout': 60000})
-
-    screenshot_path = None
-    if screenshot is not None:
-        base64_image = screenshot['image'].split(',', maxsplit=1)[1]
-        screenshot_path = 'screenshot.png'
-        image_file = open(screenshot_path, 'wb')
-        image_file.write(base64.b64decode(base64_image))
-        image_file.close()
-    
+    if False:
+        result = subprocess.run(
+            ['node', 'helpers/recordBrowser.js', url, savepath],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            print("Recording completed successfully")
+            print(result.stdout)
+        else:
+            print("Error during recording")
+            print(result.stderr)
+    print(url)
+    if False:
+        screenshot = await get_screenshot(
+                {'url': url,
+                'width': 1280,
+                'height': 1280,
+                'format': 'png',
+                'full_size':1,
+                'response_type': 'json',
+                'delay_time': 2000,
+                'timeout': 60000})
+        screenshot_path = None
+        if screenshot is not None:
+            base64_image = screenshot['image'].split(',', maxsplit=1)[1]
+            screenshot_path = 'screenshot.png'
+            image_file = open(screenshot_path, 'wb')
+            image_file.write(base64.b64decode(base64_image))
+            image_file.close()
     video_length = 0
     if os.path.exists(savepath):
         result = subprocess.run(
@@ -43,6 +43,7 @@ async def create_video_from_url(url, savepath):
         )
         if result.returncode == 0:
             video_length = float(result.stdout.strip())
+    return 'asdas'
     
     # Generate HTML response
     html_response = f"""

@@ -1,3 +1,5 @@
+const { url } = require("inspector");
+const importDynamic = new Function('modulePath', 'return import(modulePath)');
 const {
     startRecording,
     URLScreenshot,
@@ -6,10 +8,12 @@ const {
     URLScrollScreenshot,
     runContent,
 } = require("./puppeteer");
+
 const { startBrowser } = require("./puppeteer");
 
 async function createVidFromURL(url, savepath) {
     const { browser, recorder, page } = await startBrowser();
+    console.log(url);
     await page.goto(url, { waitUntil: 'networkidle2' });
     await recorder.start(savepath);
 
@@ -45,11 +49,11 @@ async function createVidFromURL(url, savepath) {
     await browser.close();
 }
 
-
 (async () => {
-    const args = process.argv.slice(1);
+    const args = process.argv.slice(2);
     const url = args[0];
     const savepath = args[1];
+    // console.log(args[0],args[1])
 //    let url = "https://github.com/CopilotKit/CopilotKit?utm_source=manuagi.beehiiv.com&utm_medium=referral&utm_campaign=top-trending-open-source-github-projects-this-week-decentralized-ai-agents-to-coding-assistants";
 //     let audio_length = 20 ;
 //     let savepath = "output.mp4";
