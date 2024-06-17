@@ -121,19 +121,28 @@ async def generate_intro_videos(num_clips, video_path):
         #     '-c:v', 'copy','-map','0:v:0','-map','1:a:0','-shortest','-y',
         #     intro_video_path
         # ], check=True)
+        # subprocess.run([
+        #     'ffmpeg',
+        #     '-i', video_clip_path,
+        #     '-vf' ,'"setpts=1.25*PTS"' ,'-r' ,'15',
+        #     '-y',
+        #     video_clip_path
+        # ], check=True)
 
-    subprocess.run([
+        subprocess.run([
         'ffmpeg',
         '-i', video_clip_path,
         '-i', audio_clip_path,
-        '-c:v', 'copy',
-        '-c:a', 'aac',
+        '-c:v', 'libx264',
+        '-c:a', 'copy',
         '-map', '0:v:0',
         '-map', '1:a:0',
+        #'-vf' ,'"setpts=1.25*PTS"' ,'-r' ,'15',
         '-shortest',
         '-y',
         intro_video_path
-    ], check=True)
+        ], check=True)
+
 
 def merge_all_segments(num_clips):
 
@@ -200,11 +209,11 @@ async def runVidGen(jsonBestParts, video_path, finalGenVideoPath):
     # video_path = 'output_video.mp4'
     await generate_intro_videos(3, video_path)
     await merge_audio_video(3)  # Then merge them as previously defined
+    #await merge_all_segments2(3)  
 
     if False:
         asyncio.run(create_clips(parsed_data,video_path))
         asyncio.run(generate_intro_videos(3, video_path))  # Ensure intro videos are generated
-   # merge_all_segments2(3)  
     return 'count'
       
 
