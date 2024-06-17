@@ -218,4 +218,23 @@ async def runVidGen(jsonBestParts, video_path, finalGenVideoPath):
       
 
 #runVidGen('out2.json','video1.mp4','finalVidPath.mp4')
+async def MergeAudVid(audPath,vidPath,FinalVidPath):
+    subprocess.run([
+        'ffmpeg',
+        '-i', vidPath,
+        '-i', audPath,
+        '-c:v', 'libx264',
+        '-c:a', 'copy',
+        '-map', '0:v:0',
+        '-map', '1:a:0',
+        #'-vf' ,'"setpts=1.25*PTS"' ,'-r' ,'15',
+        '-shortest',
+        '-y',
+        FinalVidPath
+        ], check=True)
 
+
+
+async def genAudAndMergeVid(text,audPath,vidPath,FinalVidPath):
+    await generateAudio(text,audPath)
+    await MergeAudVid(audPath,vidPath,FinalVidPath)
