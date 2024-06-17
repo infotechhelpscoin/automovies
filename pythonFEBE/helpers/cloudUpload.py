@@ -17,4 +17,5 @@ cloudinary.config(
 def upload_image(image_path):
     """ Uploads an image to Cloudinary """
     response = cloudinary.uploader.upload(image_path)
-    return response
+    url=response.get('url')
+    return url

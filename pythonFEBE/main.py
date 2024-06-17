@@ -70,8 +70,13 @@ async def process_video():
             return html_response
         if  generate_best_parts:
  #          print(bestPartsjson,audio_path,video_path,finalGenVideoPath)
-            await genAudAndMergeVid(bestPartsjson,audio_path,video_path,finalGenVideoPath)
-            return 'output'
+            url= await genAudAndMergeVid(bestPartsjson,audio_path,video_path,finalGenVideoPath)
+            return f'''
+             <h1>MP4 Video Player</h1>
+            <video width="640" height="360" controls>
+                <source src="{url}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>'''
     
     # Return HTML content
     html_response = f"""

@@ -20,8 +20,7 @@ async def get_screenshot(params,screenshot_path):
                 image_file = open(screenshot_path, 'wb')
                 image_file.write(base64.b64decode(base64_image))
                 image_file.close()
-            response = upload_image(screenshot_path)
-            url = response.get('url')
+            url = upload_image(screenshot_path)
             print("URL of the uploaded image:", url)            
             return url
         elif (r.status_code == 404):
